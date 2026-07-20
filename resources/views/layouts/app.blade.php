@@ -1237,8 +1237,16 @@ $footerCategories = [];
             }
         })
         .catch(error => {
+            // Rollback badge count on network/server error
+            badgeList.forEach(badge => {
+                let currentCount = Math.max(0, parseInt(badge.innerText) - 1);
+                badge.innerText = currentCount;
+                badge.style.display = currentCount > 0 ? 'flex' : 'none';
+            });
             btn.innerHTML = originalText;
+            btn.classList.remove('btn-success', 'text-white');
             btn.disabled = false;
+            showToast("Failed to add to cart. Please try again.", 'error');
         });
     }
 
