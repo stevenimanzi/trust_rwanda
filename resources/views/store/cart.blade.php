@@ -305,7 +305,7 @@
         // Visual feedback
         input.value = val;
 
-        fetch("{{ route('cart.update') }}", {
+        fetch("/cart/update", {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
@@ -334,7 +334,7 @@
         row.style.transition = 'all 0.3s ease';
 
         setTimeout(() => {
-            fetch("{{ route('cart.remove') }}", {
+            fetch("/cart/remove", {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {

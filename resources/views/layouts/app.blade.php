@@ -1186,7 +1186,7 @@ $footerCategories = [];
             badge.style.display = 'flex';
         });
 
-        const endpoint = "{{ route('cart.add') }}";
+        const endpoint = "/cart/add";
 
         fetch(endpoint, {
             method: 'POST',
@@ -1227,7 +1227,7 @@ $footerCategories = [];
                     badge.style.display = currentCount > 0 ? 'flex' : 'none';
                 });
                 if(data.message && data.message.toLowerCase().includes('login')) {
-                    window.location.href = "{{ route('login') }}";
+                    window.location.href = "/login";
                 } else {
                     const noticePrefix = window.KURA_I18N ? window.KURA_I18N.notice : "Notice:";
                     showToast(noticePrefix + " " + data.message, 'error');
