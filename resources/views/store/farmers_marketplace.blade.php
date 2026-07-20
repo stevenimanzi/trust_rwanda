@@ -67,7 +67,7 @@
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="card border rounded-4 shadow-sm p-3 h-100 d-flex flex-column" style="transition:0.3s;">
                         <div class="mc-img" onclick="window.location.href='{{ route('products.show', $product->id) }}'" style="cursor:pointer;">
-                            <img src="{{ $product->image_url ? asset($product->image_url) : 'https://placehold.co/200' }}" class="img-fluid rounded" alt="{{ $product->title }}">
+                            <img src="{{ kura_product_image_url($product->image_url, 'https://placehold.co/200') }}" class="img-fluid rounded" alt="{{ $product->title }}">
                         </div>
                         <div class="mt-2 flex-grow-1">
                             <span class="badge bg-success-subtle text-success small mb-1">{{ $product->category }}</span>

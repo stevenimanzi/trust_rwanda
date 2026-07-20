@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 
 if (!function_exists('kura_rating_icon_html')) {
     function kura_rating_icon_html(float $avgRating): string {
@@ -15,7 +15,9 @@ if (!function_exists('kura_rating_icon_html')) {
 
 if (!function_exists('kura_product_image_url')) {
     function kura_product_image_url($path, $fallback = '') {
-        return asset($path ? 'assets/images/products/' . $path : 'assets/images/placeholder.png');
+        if (!$path) return asset('assets/images/placeholder.png');
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) return $path;
+        return asset('assets/uploads/products/' . ltrim($path, '/'));
     }
 }
 
@@ -47,7 +49,15 @@ if (!function_exists('imanzi_language_url')) {
 
 if (!function_exists('imanzi_language_label')) {
     function imanzi_language_label($langCode) {
-        $labels = ['en' => 'English', 'rw' => 'Kinyarwanda', 'fr' => 'Français'];
+        $labels = ['en' => 'English', 'rw' => 'Kinyarwanda', 'fr' => 'Franï¿½ais'];
         return $labels[$langCode] ?? strtoupper($langCode);
     }
 }
+
+
+if (!function_exists('kura_default_logo_image_url')) {
+    function kura_default_logo_image_url() {
+        return asset('assets/images/TrustRwanda-Logo.png');
+    }
+}
+

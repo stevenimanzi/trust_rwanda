@@ -132,7 +132,7 @@
                                 @endphp
                                 <div class="col-md-6">
                                     <div class="card p-3 border rounded-3 d-flex flex-row gap-3">
-                                        <img src="{{ $p->image_url ? asset($p->image_url) : 'https://placehold.co/80' }}" class="rounded" style="width: 80px; height: 80px; object-fit: contain;" alt="{{ $p->title }}">
+                                        <img src="{{ kura_product_image_url($p->image_url, 'https://placehold.co/80') }}" class="rounded" style="width: 80px; height: 80px; object-fit: contain;" alt="{{ $p->title }}">
                                         <div class="flex-grow-1">
                                             <h6 class="fw-bold text-dark m-0">{{ $p->title }}</h6>
                                             <span class="small text-danger fw-bold d-block">{{ number_format($p->price) }} RWF</span>

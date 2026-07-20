@@ -168,7 +168,7 @@
         <!-- Image Gallery Column -->
         <div class="col-lg-6">
             <div class="pro-gallery-wrapper">
-                <img src="{{ $product->image_url ? asset($product->image_url) : 'https://placehold.co/800' }}" alt="{{ $product->title }}">
+                <img src="{{ kura_product_image_url($product->image_url, 'https://placehold.co/800') }}" alt="{{ $product->title }}">
             </div>
         </div>
 
@@ -391,7 +391,7 @@
                         <a href="{{ route('products.show', $p->id) }}" class="text-decoration-none">
                             <div class="card border-0 h-100 bg-transparent" style="transition: transform 0.3s;">
                                 <div class="rounded-4 overflow-hidden mb-3" style="aspect-ratio: 1; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                                    <img src="{{ $p->image_url ? asset($p->image_url) : 'https://placehold.co/400' }}" alt="{{ $p->title }}" class="w-100 h-100 object-fit-contain p-3" style="transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                    <img src="{{ kura_product_image_url($p->image_url, 'https://placehold.co/400') }}" alt="{{ $p->title }}" class="w-100 h-100 object-fit-contain p-3" style="transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                                 </div>
                                 <span class="text-primary small fw-bold text-uppercase tracking-wider">{{ $p->category }}</span>
                                 <h6 class="fw-bold mt-2 text-dark">{{ Str::limit($p->title, 40) }}</h6>

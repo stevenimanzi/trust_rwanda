@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->integer('id');
+            $table->id();
             $table->integer('sender_id');
             $table->integer('receiver_id');
             $table->text('message');

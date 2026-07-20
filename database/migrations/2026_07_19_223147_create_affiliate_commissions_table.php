@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('affiliate_commissions', function (Blueprint $table) {
-            $table->integer('id');
+            $table->id();
             $table->integer('referrer_id');
             $table->integer('buyer_id');
             $table->integer('order_id');

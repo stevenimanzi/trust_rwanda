@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('properties', function (Blueprint $table) {
-            $table->integer('id');
+            $table->id();
             $table->integer('owner_id');
             $table->string('property_type')->default('house');
             $table->string('listing_type')->default('sale');

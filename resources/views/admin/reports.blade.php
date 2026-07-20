@@ -16,41 +16,97 @@
     </div>
 </div>
 
+<!-- KPI Summary Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="hz-card p-4 d-flex align-items-center gap-4">
+            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm flex-shrink-0" style="width:60px; height:60px; font-size: 1.5rem; background: var(--hz-primary-light); color: var(--hz-primary);">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div>
+                <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px;">Gross Volume</div>
+                <div class="fs-4 fw-900 text-dark">{{ number_format($totalRevenue) }} <span class="fs-6 text-muted">RWF</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="hz-card p-4 d-flex align-items-center gap-4">
+            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm flex-shrink-0" style="width:60px; height:60px; font-size: 1.5rem; background: var(--hz-secondary-light); color: var(--hz-secondary);">
+                <i class="bi bi-cart-check"></i>
+            </div>
+            <div>
+                <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px;">Fulfillments</div>
+                <div class="fs-4 fw-900 text-dark">{{ number_format($totalOrders) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="hz-card p-4 d-flex align-items-center gap-4">
+            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm flex-shrink-0" style="width:60px; height:60px; font-size: 1.5rem; background: var(--hz-tertiary-light); color: var(--hz-tertiary);">
+                <i class="bi bi-calculator"></i>
+            </div>
+            <div>
+                <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.5px;">Avg Order Value</div>
+                <div class="fs-4 fw-900 text-dark">{{ $totalOrders > 0 ? number_format($totalRevenue / $totalOrders) : 0 }} <span class="fs-6 text-muted">RWF</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4 mb-4">
     <div class="col-lg-8">
-        <div class="pro-card">
-            <h5 class="fw-900 text-dark mb-4"><i class="bi bi-graph-up-arrow"></i> FULFILLMENT TREND</h5>
+        <div class="hz-card p-4">
+            <h5 class="fw-800 text-dark mb-4"><i class="bi bi-graph-up-arrow text-muted me-2"></i> FULFILLMENT TREND</h5>
             <div style="height: 300px;"><canvas id="revenueTrendChart"></canvas></div>
         </div>
     </div>
     
     <div class="col-lg-4">
-        <div class="pro-card">
-            <h5 class="fw-900 text-dark mb-4"><i class="bi bi-tag-fill"></i> CATEGORY MIX</h5>
+        <div class="hz-card p-4">
+            <h5 class="fw-800 text-dark mb-4"><i class="bi bi-pie-chart text-muted me-2"></i> CATEGORY MIX</h5>
             <div style="height: 300px;"><canvas id="categoryBreakdownChart"></canvas></div>
         </div>
     </div>
 </div>
 
-<div class="pro-card mb-4">
-    <h5 class="fw-900 text-dark mb-4 border-bottom pb-2"><i class="bi bi-shop"></i> TOP MERCHANT DISPATCH</h5>
+<div class="hz-card p-4 mb-4">
+    <h5 class="fw-800 text-dark mb-4 border-bottom pb-3"><i class="bi bi-shop text-muted me-2"></i> TOP MERCHANT DISPATCH</h5>
     <div class="table-responsive">
         <table class="table table-custom align-middle">
             <thead>
                 <tr>
                     <th>Merchant Brand</th>
                     <th>Fulfillments</th>
+                    <th>Market Share</th>
                     <th class="text-end">Volume Revenue</th>
                 </tr>
             </thead>
             <tbody>
                 @if(empty($topVendors))
-                    <tr><td colspan="3" class="text-center py-4 opacity-50 fw-bold">NO SALES DATA CURRENTLY IN RANGE</td></tr>
+                    <tr><td colspan="4" class="text-center py-4 opacity-50 fw-bold">NO SALES DATA CURRENTLY IN RANGE</td></tr>
                 @else
                     @foreach ($topVendors as $row)
+                    @php
+                        $share = $totalRevenue > 0 ? ($row->total_sales / $totalRevenue) * 100 : 0;
+                    @endphp
                     <tr>
-                        <td><div class="fw-900 text-dark">{{ $row->shop_name }}</div></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm flex-shrink-0" style="width:40px; height:40px; font-size: 1rem; background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                                    {{ strtoupper(substr($row->shop_name, 0, 1)) }}
+                                </div>
+                                <div class="fw-900 text-dark">{{ $row->shop_name }}</div>
+                            </div>
+                        </td>
                         <td><span class="badge bg-indigo-subtle text-primary border border-primary border-opacity-10 px-3 py-1 rounded-pill fw-bold">{{ $row->order_count }} Fulfilled</span></td>
+                        <td style="width: 25%;">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 6px; border-radius: 10px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $share }}%" aria-valuenow="{{ $share }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="small fw-bold text-muted">{{ number_format($share, 1) }}%</div>
+                            </div>
+                        </td>
                         <td class="text-end fw-900 text-dark">{{ number_format($row->total_sales) }} RWF</td>
                     </tr>
                     @endforeach
@@ -78,13 +134,13 @@
                     datasets: [{
                         label: 'GTV Sales (RWF)',
                         data: {!! json_encode($chartRevenue) !!},
-                        borderColor: '#6366f1',
+                        borderColor: '#ff6a3e', // hz-primary
                         borderWidth: 3,
                         backgroundColor: gradient,
                         fill: true,
                         tension: 0.3,
                         pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#6366f1',
+                        pointBorderColor: '#ff6a3e',
                         pointHoverRadius: 6
                     }]
                 },
@@ -108,7 +164,7 @@
                     labels: {!! json_encode($catLabels) !!},
                     datasets: [{
                         data: {!! json_encode($catCounts) !!},
-                        backgroundColor: ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6'],
+                        backgroundColor: ['#ff6a3e', '#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'], // Horizon theme palette
                         borderWidth: 0
                     }]
                 },
@@ -125,9 +181,6 @@
 
 @section('styles')
 <style>
-    .pro-card { background: var(--admin-card); border-radius: 24px; border: 1px solid var(--border); padding: 1.75rem; box-shadow: var(--shadow-sm); height: 100%; transition: all 0.3s ease; }
-    .pro-card:hover { box-shadow: var(--shadow-md); border-color: #cbd5e1; }
-    
     .filter-pill { border: 1px solid var(--border); background: #f1f5f9; color: var(--admin-muted); font-weight: 800; padding: 0.6rem 1.5rem; border-radius: 50px; transition: 0.3s; text-decoration: none; font-size: 0.8rem; }
     .filter-pill:hover, .filter-pill.active { background: var(--admin-accent); color: white; border-color: var(--admin-accent); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
 

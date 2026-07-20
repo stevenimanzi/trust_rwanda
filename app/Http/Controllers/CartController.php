@@ -177,18 +177,32 @@ class CartController extends Controller
 
             $productsById = $products->keyBy('id');
 
+            $vendorGroups = [];
+
             foreach ($cart as $id => $qty) {
                 $productId = (int)$id;
                 if (!isset($productsById[$productId])) {
                     continue;
                 }
                 $p = $productsById[$productId];
-                $total += $p->price * $qty;
-                $cartItems[] = ['product' => $p, 'qty' => $qty];
+                $lineTotal = $p->price * $qty;
+                $total += $lineTotal;
+                
+                $vId = $p->user_id;
+                if (!isset($vendorGroups[$vId])) {
+                    $vendorGroups[$vId] = [
+                        'shop_name' => $p->vendor ? $p->vendor->shop_name : 'TrustRwanda Shop',
+                        'items' => [],
+                        'subtotal' => 0
+                    ];
+                }
+                
+                $vendorGroups[$vId]['items'][] = ['product' => $p, 'qty' => $qty];
+                $vendorGroups[$vId]['subtotal'] += $lineTotal;
             }
         }
 
-        return view('store.checkout', compact('cartItems', 'total', 'user'));
+        return view('store.checkout', compact('vendorGroups', 'total', 'user'));
     }
 
     public function placeOrder(Request $request)
@@ -214,7 +228,7 @@ class CartController extends Controller
         $locationLng = trim((string)$request->input('location_lng', ''));
         
         if ($locationLat !== '' && $locationLng !== '') {
-            $address .= ' | Live location: ' . $locationLat . ', ' . $locationLng;
+            $address .= "\n📍 Maps: https://maps.google.com/?q={$locationLat},{$locationLng}";
         }
         $phone = $request->input('contact_phone', $user->phone);
 

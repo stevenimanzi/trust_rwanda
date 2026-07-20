@@ -56,16 +56,18 @@ class VendorController extends Controller
             ->where('order_items.vendor_id', $vendorId)
             ->where('orders.delivery_status', 'delivered')
             ->where('products.category', '!=', 'real-estate')
-            ->selectRaw('YEAR(orders.created_at) as year, MONTH(orders.created_at) as month, SUM(order_items.quantity * order_items.price_at_purchase) as total')
-            ->groupBy('year', 'month')
+            ->where('orders.created_at', '>=', now()->subYear()->startOfYear())
+            ->select('orders.created_at', DB::raw('order_items.quantity * order_items.price_at_purchase as line_total'))
             ->get();
             
         $currentYear = (int)date('Y');
         foreach ($salesQuery as $row) {
-            if ($row->year == $currentYear) {
-                $currentYearSales[$row->month] = (float)$row->total;
-            } elseif ($row->year == $currentYear - 1) {
-                $lastYearSales[$row->month] = (float)$row->total;
+            $year = (int)date('Y', strtotime($row->created_at));
+            $month = (int)date('n', strtotime($row->created_at));
+            if ($year === $currentYear) {
+                $currentYearSales[$month] += (float)$row->line_total;
+            } elseif ($year === $currentYear - 1) {
+                $lastYearSales[$month] += (float)$row->line_total;
             }
         }
         

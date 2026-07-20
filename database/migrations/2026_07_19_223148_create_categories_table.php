@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->integer('id');
+            $table->id();
             $table->string('name', 50);
             $table->string('slug', 50);
             $table->string('icon_class', 50)->nullable();

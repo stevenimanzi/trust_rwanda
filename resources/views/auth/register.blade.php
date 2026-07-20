@@ -4,184 +4,199 @@
 
 @section('styles')
 <style>
-    body {
-        background-color: #dfdbed;
-        margin: 0;
-        padding-top: 100px;
-    }
-    
-    .login-container {
+    .tr-login-wrapper {
         display: flex;
-        align-items: center;
         justify-content: center;
-        min-height: calc(100vh - 120px);
-        padding: 20px;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+        padding: 40px 20px;
+        background-color: #f8fafc;
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    .login-card {
-        display: flex;
-        width: 1000px;
+    .tr-login-container {
+        width: 100%;
+        max-width: 500px;
         background: #ffffff;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-
-    .login-left {
-        flex: 1;
-        background: linear-gradient(180deg, #f2f7ff 0%, #e1fbef 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
         padding: 40px;
-        position: relative;
+        box-sizing: border-box;
     }
 
-    .login-right {
-        flex: 1;
-        padding: 50px 60px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+    .tr-logo-area {
+        text-align: center;
+        margin-bottom: 25px;
     }
 
-    .login-heading {
-        color: #1a428a;
-        font-weight: 800;
+    .tr-logo-area i {
+        font-size: 36px;
+        color: #4f46e5;
+    }
+
+    .tr-title {
         font-size: 24px;
-        margin-bottom: 10px;
-        letter-spacing: 1px;
+        font-weight: 800;
+        color: #0f172a;
+        text-align: center;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
     }
 
-    .login-subheading {
-        color: #b0b0b0;
+    .tr-subtitle {
+        color: #64748b;
         font-size: 14px;
+        text-align: center;
         margin-bottom: 30px;
-        line-height: 1.5;
     }
 
-    .form-row {
+    .tr-form-row {
         display: flex;
         gap: 15px;
         margin-bottom: 20px;
     }
     
-    .form-col {
+    .tr-form-col {
         flex: 1;
     }
 
-    .form-group {
+    .tr-form-group {
         margin-bottom: 20px;
     }
 
-    .form-label {
+    .tr-form-label {
         display: block;
-        color: #9e9e9e;
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
         margin-bottom: 8px;
     }
 
-    .input-wrapper {
+    .tr-input-wrapper {
         position: relative;
     }
 
-    .input-field {
+    .tr-form-control {
         width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        font-size: 13px;
-        color: #333;
-        outline: none;
-        transition: border-color 0.3s;
+        padding: 12px 16px 12px 42px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        color: #0f172a;
+        transition: all 0.2s ease;
+        background: #fff;
         box-sizing: border-box;
     }
 
-    .input-field::placeholder {
-        color: #d0d0d0;
+    .tr-form-control:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
     }
 
-    .input-field:focus {
-        border-color: #1a428a;
-    }
-
-    .input-icon {
+    .tr-icon {
         position: absolute;
-        right: 15px;
+        left: 14px;
         top: 50%;
         transform: translateY(-50%);
-        color: #b0b0b0;
+        color: #94a3b8;
         font-size: 16px;
+        transition: color 0.2s;
     }
 
-    .login-btn {
+    .tr-form-control:focus + .tr-icon {
+        color: #4f46e5;
+    }
+
+    .tr-btn-submit {
         width: 100%;
-        background-color: #2563eb;
-        color: #ffffff;
-        border: none;
         padding: 14px;
-        border-radius: 6px;
-        font-size: 14px;
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
         font-weight: 700;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         margin-top: 10px;
     }
 
-    .login-btn:hover {
-        background-color: #1d4ed8;
+    .tr-btn-submit:hover {
+        background: #4338ca;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
     }
-    
-    .pass-criteria {
-        list-style: none;
-        padding: 0;
-        margin: 5px 0 0 5px;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
+
+    .tr-register-link {
+        text-align: center;
+        margin-top: 25px;
+        color: #64748b;
+        font-size: 14px;
     }
-    
-    .pass-criteria li {
-        font-size: 11px;
-        color: #b0b0b0;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: color 0.3s;
+
+    .tr-register-link a {
+        color: #4f46e5;
+        font-weight: 700;
+        text-decoration: none;
     }
-    .pass-criteria li.valid { color: #559b38; }
+
+    .tr-register-link a:hover {
+        text-decoration: underline;
+    }
 
     .tr-alert {
-        padding: 12px 15px;
-        border-radius: 6px;
-        margin-bottom: 20px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        font-size: 13px;
         font-weight: 600;
-        font-size: 12px;
         display: flex;
         align-items: center;
         gap: 10px;
-    }
-
-    .tr-alert-danger {
         background: #fef2f2;
         color: #b91c1c;
         border: 1px solid #fecaca;
     }
 
-    @media (max-width: 768px) {
-        .login-card {
-            flex-direction: column;
-            width: 100%;
+    .pass-criteria {
+        list-style: none;
+        padding: 0;
+        margin: 8px 0 0 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .pass-criteria li {
+        font-size: 12px;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.3s;
+    }
+    .pass-criteria li.valid { color: #16a34a; }
+    
+    .tr-business-links {
+        text-align: center; 
+        margin-top: 20px; 
+        border-top: 1px solid #e2e8f0; 
+        padding-top: 20px;
+    }
+    
+    @media (max-width: 576px) {
+        .tr-login-wrapper {
+            padding: 20px 15px;
         }
-        .login-left {
-            display: none;
+        .tr-login-container {
+            padding: 30px 20px;
         }
-        .login-right {
-            padding: 30px;
-        }
-        .form-row {
+        .tr-form-row {
             flex-direction: column;
             gap: 0;
         }
@@ -190,121 +205,96 @@
 @endsection
 
 @section('content')
-<div class="login-container">
-    <div class="login-card">
-        <div class="login-left">
-            <svg viewBox="0 0 400 300" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
-                <!-- Monitor Base -->
-                <rect x="80" y="80" width="240" height="150" rx="15" fill="#1a428a" />
-                <rect x="90" y="90" width="220" height="130" fill="#ffffff" />
-                <rect x="160" y="230" width="80" height="10" fill="#1a428a" />
-                
-                <!-- Registration form inside monitor -->
-                <rect x="120" y="105" width="160" height="100" rx="5" fill="#f8f9fa" stroke="#e0e0e0" stroke-width="2"/>
-                <circle cx="200" cy="125" r="12" fill="#c4d2e8" />
-                <path d="M190 145 Q200 135 210 145" stroke="#1a428a" stroke-width="3" stroke-linecap="round" fill="none"/>
-                
-                <rect x="135" y="155" width="130" height="6" rx="3" fill="#1a428a" opacity="0.3"/>
-                <rect x="135" y="170" width="130" height="6" rx="3" fill="#1a428a" opacity="0.3"/>
-                <rect x="135" y="185" width="130" height="6" rx="3" fill="#1a428a" opacity="0.3"/>
-                
-                <!-- Shield overlay -->
-                <path d="M50 160 L100 160 L100 210 Q75 240 50 210 Z" fill="#ffb74d" />
-                <path d="M55 165 L95 165 L95 205 Q75 230 55 205 Z" fill="#1a428a" />
-                <!-- Plus in shield (Sign up) -->
-                <rect x="71" y="175" width="8" height="20" rx="2" fill="#ffffff" />
-                <rect x="65" y="181" width="20" height="8" rx="2" fill="#ffffff" />
-                
-                <!-- Plant (Now Blue) -->
-                <path d="M320 220 Q310 180 320 160 Q330 180 320 220" fill="#3b82f6" />
-                <path d="M320 220 Q335 190 340 170 Q325 190 320 220" fill="#2563eb" />
-                <path d="M320 220 Q305 190 300 170 Q315 190 320 220" fill="#60a5fa" />
-                <rect x="305" y="220" width="30" height="20" rx="3" fill="#8c7ae6" />
-            </svg>
+<div class="tr-login-wrapper">
+    <div class="tr-login-container">
+        <div class="tr-logo-area">
+            <i class="bi bi-cart4"></i>
         </div>
         
-        <div class="login-right">
-            <h1 class="login-heading">SIGN UP</h1>
-            <p class="login-subheading">Welcome,<br>Create a new account</p>
+        <h1 class="tr-title">Create Account</h1>
+        <p class="tr-subtitle">Create a new Trust Rwanda account.</p>
 
-            @if ($errors->any())
-                <div class="tr-alert tr-alert-danger">
-                    <i class="bi bi-exclamation-circle-fill"></i> {{ $errors->first() }}
-                </div>
-            @endif
+        @if ($errors->any())
+            <div class="tr-alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i> 
+                <div>{{ $errors->first() }}</div>
+            </div>
+        @endif
 
-            <form method="POST" action="{{ route('register') }}">
-                @csrf
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label class="form-label" for="nameInput">Full Name</label>
-                            <div class="input-wrapper">
-                                <input type="text" name="full_name" id="nameInput" class="input-field" placeholder="Enter Full Name" value="{{ old('full_name') }}" required>
-                                <i class="bi bi-person input-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label class="form-label" for="phoneInput">Phone Number</label>
-                            <div class="input-wrapper">
-                                <input type="tel" name="phone" id="phoneInput" class="input-field" placeholder="Enter Phone" value="{{ old('phone') }}" required>
-                                <i class="bi bi-telephone input-icon"></i>
-                            </div>
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
+            
+            <div class="tr-form-row">
+                <div class="tr-form-col">
+                    <div class="tr-form-group">
+                        <label class="tr-form-label" for="nameInput">Full Name</label>
+                        <div class="tr-input-wrapper">
+                            <input type="text" name="full_name" id="nameInput" class="tr-form-control" placeholder="Enter Full Name" value="{{ old('full_name') }}" required>
+                            <i class="bi bi-person tr-icon"></i>
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="emailInput">Email ID</label>
-                    <div class="input-wrapper">
-                        <input type="email" name="email" id="emailInput" class="input-field" placeholder="Enter Email ID" value="{{ old('email') }}" required>
-                        <i class="bi bi-envelope input-icon"></i>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group" style="margin-bottom: 5px;">
-                            <label class="form-label" for="passInput">Password</label>
-                            <div class="input-wrapper">
-                                <input type="password" name="password" id="passInput" class="input-field" placeholder="Enter Password" required>
-                                <i class="bi bi-lock input-icon"></i>
-                            </div>
-                        </div>
-                        <ul class="pass-criteria">
-                            <li id="crit-upper"><i class="bi bi-circle"></i> Uppercase Letter</li>
-                            <li id="crit-num"><i class="bi bi-circle"></i> Number</li>
-                        </ul>
-                    </div>
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label class="form-label" for="confInput">Confirm Password</label>
-                            <div class="input-wrapper">
-                                <input type="password" name="password_confirmation" id="confInput" class="input-field" placeholder="Confirm Password" required>
-                                <i class="bi bi-shield-check input-icon"></i>
-                            </div>
+                <div class="tr-form-col">
+                    <div class="tr-form-group">
+                        <label class="tr-form-label" for="phoneInput">Phone Number</label>
+                        <div class="tr-input-wrapper">
+                            <input type="tel" name="phone" id="phoneInput" class="tr-form-control" placeholder="Enter Phone" value="{{ old('phone') }}" required>
+                            <i class="bi bi-telephone tr-icon"></i>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <button type="submit" class="login-btn">SIGN UP</button>
-                
-                <div style="text-align: center; margin-top: 20px;">
-                    <a href="{{ route('login') }}" style="color: #1a428a; font-size: 13px; font-weight: 700; text-decoration: none;">Already have an account? Login</a>
+            <div class="tr-form-group">
+                <label class="tr-form-label" for="emailInput">Email ID</label>
+                <div class="tr-input-wrapper">
+                    <input type="email" name="email" id="emailInput" class="tr-form-control" placeholder="Enter Email ID" value="{{ old('email') }}" required>
+                    <i class="bi bi-envelope tr-icon"></i>
                 </div>
-                
-                <div style="text-align: center; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                    <p style="color: #9e9e9e; font-size: 12px; margin-bottom: 10px;">Are you a business?</p>
-                    <div style="display: flex; justify-content: center; gap: 15px;">
-                        <a href="{{ route('vendor.register') }}" style="color: #2563eb; font-size: 12px; font-weight: 600; text-decoration: none;"><i class="bi bi-shop me-1"></i> Vendor Register</a>
-                        <span style="color: #ccc;">|</span>
-                        <a href="{{ route('property_owner.register') }}" style="color: #2563eb; font-size: 12px; font-weight: 600; text-decoration: none;"><i class="bi bi-building me-1"></i> Real Estate Agent Register</a>
+            </div>
+
+            <div class="tr-form-row">
+                <div class="tr-form-col">
+                    <div class="tr-form-group" style="margin-bottom: 5px;">
+                        <label class="tr-form-label" for="passInput">Password</label>
+                        <div class="tr-input-wrapper">
+                            <input type="password" name="password" id="passInput" class="tr-form-control" placeholder="Enter Password" required>
+                            <i class="bi bi-lock tr-icon"></i>
+                        </div>
+                    </div>
+                    <ul class="pass-criteria">
+                        <li id="crit-upper"><i class="bi bi-circle"></i> Uppercase Letter</li>
+                        <li id="crit-num"><i class="bi bi-circle"></i> Number</li>
+                    </ul>
+                </div>
+                <div class="tr-form-col">
+                    <div class="tr-form-group">
+                        <label class="tr-form-label" for="confInput">Confirm Password</label>
+                        <div class="tr-input-wrapper">
+                            <input type="password" name="password_confirmation" id="confInput" class="tr-form-control" placeholder="Confirm Password" required>
+                            <i class="bi bi-shield-check tr-icon"></i>
+                        </div>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <button type="submit" class="tr-btn-submit">
+                Sign Up <i class="bi bi-person-plus ms-1"></i>
+            </button>
+            
+            <div class="tr-register-link">
+                Already have an account? <a href="{{ route('login') }}">Login</a>
+            </div>
+            
+            <div class="tr-business-links">
+                <p style="color: #64748b; font-size: 13px; margin-bottom: 12px; font-weight: 600;">Are you a business?</p>
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <a href="{{ route('vendor.register') }}" style="color: #4f46e5; font-size: 13px; font-weight: 700; text-decoration: none;"><i class="bi bi-shop me-1"></i> Vendor Register</a>
+                    <span style="color: #cbd5e1;">|</span>
+                    <a href="{{ route('property_owner.register') }}" style="color: #4f46e5; font-size: 13px; font-weight: 700; text-decoration: none;"><i class="bi bi-building me-1"></i> Real Estate Agent Register</a>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

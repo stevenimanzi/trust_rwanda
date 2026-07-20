@@ -295,9 +295,10 @@
             </a>
 
             <!-- Search Bar Desktop (Center) -->
-            <form action="{{ route('products.index') }}" method="GET" class="header-search-form d-none d-lg-flex">
-                <input type="text" name="q" placeholder="Search for anything..." value="{{ request()->query('q') }}">
+            <form action="{{ route('search.index') }}" method="GET" class="header-search-form d-none d-lg-flex position-relative">
+                <input type="text" name="q" class="live-search-input" placeholder="Search for anything..." value="{{ request()->query('q') }}" autocomplete="off">
                 <button type="submit"><i class="bi bi-search"></i></button>
+                <div class="live-search-results dropdown-menu w-100 shadow-lg border-0 mt-2 p-0" style="display:none; position:absolute; top:100%; z-index:1060; border-radius:12px; max-height: 400px; overflow-y: auto;"></div>
             </form>
 
             <!-- Actions Separation -->
@@ -379,9 +380,10 @@
 
         <!-- Search Bar Mobile Row -->
         <div class="w-100 px-3 pb-2 d-lg-none">
-            <form action="{{ route('products.index') }}" method="GET" class="header-search-form w-100">
-                <input type="text" name="q" placeholder="Search for anything..." value="{{ request()->query('q') }}" style="height: 38px;">
+            <form action="{{ route('search.index') }}" method="GET" class="header-search-form w-100 position-relative">
+                <input type="text" name="q" class="live-search-input" placeholder="Search for anything..." value="{{ request()->query('q') }}" style="height: 38px;" autocomplete="off">
                 <button type="submit"><i class="bi bi-search"></i></button>
+                <div class="live-search-results dropdown-menu w-100 shadow-lg border-0 mt-1 p-0" style="display:none; position:absolute; top:100%; z-index:1060; border-radius:12px; max-height: 350px; overflow-y: auto;"></div>
             </form>
         </div>
 
@@ -419,3 +421,106 @@
         </div>
     </nav>
 @endif
+
+<style>
+.live-search-results .dropdown-item {
+    transition: background-color 0.2s;
+    white-space: normal;
+}
+.live-search-results .dropdown-item:hover {
+    background-color: #f8fafc;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInputs = document.querySelectorAll('.live-search-input');
+    
+    searchInputs.forEach(input => {
+        let debounceTimer;
+        const resultsContainer = input.parentElement.querySelector('.live-search-results');
+        
+        input.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+            
+            debounceTimer = setTimeout(() => {
+                fetch(`{{ route('search.index') }}?q=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    const hasProducts = data.products && data.products.length > 0;
+                    const hasProperties = data.properties && data.properties.length > 0;
+                    
+                    if (!hasProducts && !hasProperties) {
+                        html = `<div class="p-3 text-center text-muted small">No results found for "${query}"</div>`;
+                    } else {
+                        if (hasProducts) {
+                            html += `<div class="px-3 py-2 bg-light border-bottom text-muted small fw-bold text-uppercase">Products</div>`;
+                            data.products.forEach(product => {
+                                const img = product.image_url || 'https://placehold.co/100x100/eeeeee/999999?text=No+Image';
+                                const price = Number(product.price).toLocaleString() + ' ' + (product.price_unit || 'RWF');
+                                html += `
+                                    <a href="/products/${product.id}" class="dropdown-item d-flex align-items-center gap-3 py-2 border-bottom">
+                                        <img src="${img}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div class="fw-bold text-truncate" style="font-size: 0.85rem;">${product.title}</div>
+                                            <div class="text-primary fw-bold" style="font-size: 0.75rem;">${price}</div>
+                                        </div>
+                                    </a>
+                                `;
+                            });
+                        }
+                        
+                        if (hasProperties) {
+                            html += `<div class="px-3 py-2 bg-light border-bottom text-muted small fw-bold text-uppercase">Properties</div>`;
+                            data.properties.forEach(property => {
+                                const price = Number(property.price).toLocaleString() + ' RWF';
+                                html += `
+                                    <a href="/properties/${property.id}" class="dropdown-item d-flex align-items-center gap-3 py-2 border-bottom">
+                                        <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-buildings text-secondary"></i>
+                                        </div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div class="fw-bold text-truncate" style="font-size: 0.85rem;">${property.title}</div>
+                                            <div class="text-primary fw-bold" style="font-size: 0.75rem;">${price}</div>
+                                        </div>
+                                    </a>
+                                `;
+                            });
+                        }
+                    }
+                    
+                    resultsContainer.innerHTML = html;
+                    resultsContainer.style.display = 'block';
+                })
+                .catch(error => console.error('Search error:', error));
+            }, 300); // 300ms debounce
+        });
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!input.contains(e.target) && !resultsContainer.contains(e.target)) {
+                resultsContainer.style.display = 'none';
+            }
+        });
+        
+        // Show dropdown if input is clicked and has value
+        input.addEventListener('focus', function() {
+            if (this.value.trim().length >= 2 && resultsContainer.innerHTML !== '') {
+                resultsContainer.style.display = 'block';
+            }
+        });
+    });
+});
+</script>

@@ -91,9 +91,9 @@
 @endif
 
 <div class="ecom-card mb-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <form action="{{ route('vendor.products') }}" method="GET" class="d-flex gap-3 m-0" id="searchForm">
-            <div class="position-relative" style="width: 350px;">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <form action="{{ route('vendor.products') }}" method="GET" class="d-flex m-0 w-100" id="searchForm" style="max-width: 350px;">
+            <div class="position-relative w-100">
                 <i class="bi bi-search position-absolute text-muted" style="left: 15px; top: 50%; transform: translateY(-50%);"></i>
                 <input type="text" name="q" class="form-control-pro w-100 ps-5" placeholder="Search by name or category" value="{{ $search }}" id="searchInput">
             </div>
@@ -131,7 +131,7 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-3">
-                                <img src="{{ $product->image_url ? asset('assets/uploads/products/'.$product->image_url) : 'https://placehold.co/40x40/f1f5f9/94a3b8?text=Img' }}" 
+                                <img src="{{ kura_product_image_url($product->image_url, 'https://placehold.co/40x40/f1f5f9/94a3b8?text=Img') }}" 
                                      style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid #f1f5f9;">
                                 <div>
                                     <div class="fw-bold text-dark">{{ $product->title }}</div>

@@ -99,15 +99,15 @@
 <!-- TOPNAV -->
 <header class="hz-topnav bg-white shadow-sm" style="height: 80px; padding: 0 32px; display:flex; align-items:center; justify-content:space-between;">
     <div class="d-flex align-items-center gap-3">
-        <button class="hz-mobile-toggle" onclick="document.querySelector('.hz-sidebar').classList.toggle('show')">
-            <i class="bi bi-list"></i>
+        <button class="hz-mobile-toggle d-lg-none d-flex align-items-center justify-content-center btn btn-light border shadow-sm rounded-circle me-2" style="width: 42px; height: 42px;" onclick="document.querySelector('.hz-sidebar').classList.toggle('show')">
+            <i class="bi bi-list fs-4 text-dark"></i>
         </button>
-        <div class="hz-page-title fs-5 fw-bold text-dark mb-0">
+        <div class="hz-page-title fs-5 fw-bold text-dark mb-0 d-none d-md-block">
             Hello, {{ explode(' ', $poUser->name ?? 'Owner')[0] }} 👋
         </div>
     </div>
     
-    <div class="hz-dashboard-search position-relative">
+    <div class="hz-dashboard-search position-relative d-none d-md-flex">
         <i class="bi bi-search text-muted"></i>
         <input type="text" id="quickSearchInput" placeholder="Search features, pages, tools..." autocomplete="off">
         
@@ -120,20 +120,59 @@
         </div>
     </div>
     
-    <div class="hz-top-actions d-flex align-items-center gap-3">
+    <div class="hz-top-actions d-flex align-items-center gap-2 gap-md-3">
         <div class="d-flex align-items-center gap-2">
-            <div class="hz-icon-btn-light">
-                <i class="bi bi-bell"></i>
-                <span class="hz-dot" style="background:#ef4444; width:6px; height:6px; top:12px; right:12px;"></span>
+            
+            <!-- Notifications -->
+            <div class="dropdown">
+                <div class="hz-icon-btn-light" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                    <i class="bi bi-bell"></i>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-0" style="width: 320px; border-radius: 12px; overflow: hidden;">
+                    <li class="px-3 py-3 border-bottom bg-light fw-bold text-dark d-flex justify-content-between align-items-center">
+                        <span>Notifications</span>
+                    </li>
+                    <li class="px-3 py-5 text-center text-muted">
+                        <i class="bi bi-bell-slash fs-3 mb-2 d-block opacity-50"></i>
+                        <span class="small">No new notifications</span>
+                    </li>
+                </ul>
             </div>
-            <div class="hz-icon-btn-light" style="background:#f3f4f6; color:#6b7280;">
-                <i class="bi bi-envelope"></i>
+
+            <!-- Messages -->
+            <div class="dropdown">
+                <div class="hz-icon-btn-light" data-bs-toggle="dropdown" aria-expanded="false" style="background:#f3f4f6; color:#6b7280; cursor: pointer;">
+                    <i class="bi bi-envelope"></i>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-0" style="width: 280px; border-radius: 12px; overflow: hidden;">
+                    <li class="px-3 py-3 border-bottom bg-light fw-bold text-dark">Messages</li>
+                    <li class="px-3 py-5 text-center text-muted">
+                        <i class="bi bi-chat-dots fs-3 mb-2 d-block opacity-50"></i>
+                        <span class="small">Your inbox is empty</span>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="d-flex align-items-center gap-2 ms-2 cursor-pointer">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode($poUser->name ?? 'Owner') }}&background=1e293b&color=ffffff&bold=true" class="hz-avatar rounded-circle" style="width: 36px; height:36px;" alt="User Avatar">
-            <div class="fw-bold" style="font-size:0.9rem;">{{ $poUser->name ?? 'Owner' }}</div>
-            <i class="bi bi-chevron-down text-muted" style="font-size:0.7rem;"></i>
+
+        <!-- User Profile Dropdown -->
+        <div class="dropdown">
+            <div class="d-flex align-items-center gap-2 ms-1 ms-md-2 cursor-pointer" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($poUser->name ?? 'Owner') }}&background=1e293b&color=ffffff&bold=true" class="hz-avatar rounded-circle" style="width: 40px; height: 40px;" alt="User Avatar">
+                <div class="d-none d-md-block">
+                    <div class="fw-bold text-dark" style="font-size:0.9rem; line-height: 1;">{{ explode(' ', $poUser->name ?? 'Owner')[0] }}</div>
+                    <div class="text-muted" style="font-size:0.75rem;">Property Owner</div>
+                </div>
+                <i class="bi bi-chevron-down text-muted d-none d-md-block" style="font-size:0.75rem;"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="border-radius: 12px; min-width: 200px;">
+                <li class="px-3 py-2 border-bottom mb-1">
+                    <div class="fw-bold text-dark">{{ $poUser->name ?? 'Owner' }}</div>
+                    <div class="small text-muted">{{ $poUser->email ?? 'owner@example.com' }}</div>
+                </li>
+                <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ route('property_owner.settings') }}"><i class="bi bi-gear me-3 text-muted"></i> Account Settings</a></li>
+                <li><hr class="dropdown-divider my-1"></li>
+                <li><a class="dropdown-item py-2 d-flex align-items-center text-danger" href="#" onclick="document.getElementById('logout-form').submit(); return false;"><i class="bi bi-box-arrow-right me-3"></i> Log Out</a></li>
+            </ul>
         </div>
     </div>
 </header>

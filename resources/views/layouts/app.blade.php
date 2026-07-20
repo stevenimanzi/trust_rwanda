@@ -14,7 +14,7 @@ if (!function_exists('kura_product_image_url')) {
     function kura_product_image_url($path, $fallback = '') {
         if (!$path) return asset('assets/images/placeholder.png');
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) return $path;
-        return asset('assets/images/products/' . $path);
+        return asset('assets/uploads/products/' . ltrim($path, '/'));
     }
 }
 if (!function_exists('kura_csrf_input')) {
@@ -339,6 +339,9 @@ $footerCategories = [];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
@@ -371,6 +374,21 @@ $footerCategories = [];
             max-width: 100%;
         }
 
+        /* ════════ BOOTSTRAP PRIMARY OVERRIDES ════════ */
+        .text-primary { color: var(--primary) !important; }
+        .bg-primary { background-color: var(--primary) !important; }
+        .btn-primary { background-color: var(--primary) !important; border-color: var(--primary) !important; color: white !important; }
+        .btn-primary:hover { background-color: var(--primary-hover) !important; border-color: var(--primary-hover) !important; }
+        .btn-outline-primary { color: var(--primary) !important; border-color: var(--primary) !important; }
+        .btn-outline-primary:hover { background-color: var(--primary) !important; color: white !important; }
+        .border-primary { border-color: var(--primary) !important; }
+        .bg-primary-subtle { background-color: #eff6ff !important; }
+        .text-primary-emphasis { color: #1e40af !important; }
+
+        .catalog-banner, .checkout-header, .search-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%) !important;
+        }
+
         /* ════════ NAVBAR PRO (SPACING & DROPDOWNS) ════════ */
         .navbar-pro {
             background: var(--glass);
@@ -393,6 +411,7 @@ $footerCategories = [];
             align-items: center;
             justify-content: space-between;
             gap: 40px; /* Enhanced separation */
+            flex-wrap: wrap;
         }
 
         .brand-logo { text-decoration: none !important; display: flex; align-items: center; white-space: nowrap; }
@@ -504,6 +523,7 @@ $footerCategories = [];
             margin: 0 auto;
             padding: 0 15px;
             display: flex;
+            align-items: flex-start;
             gap: 12px;
             overflow-x: auto;
             scrollbar-width: none;
@@ -618,8 +638,9 @@ $footerCategories = [];
                 margin-top: 10px; 
                 border: 1px solid #f1f5f9; 
                 box-shadow: 0 15px 30px rgba(0,0,0,0.08); 
+                flex-basis: 100%;
             }
-            .navbar-shell { padding: 8px 15px; gap: 15px; }
+            .navbar-shell { padding: 8px 15px; gap: 15px; flex-wrap: wrap; }
             .d-mobile-full { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
             .d-mobile-full a, .d-mobile-full .dropdown, .d-mobile-full button { width: 100%; text-align: center; }
             .d-mobile-full .dropdown-toggle { max-width: 100% !important; justify-content: center; }
@@ -651,10 +672,10 @@ $footerCategories = [];
             </a>
 
             <!-- Search Bar Desktop (Center) -->
-            <form action="{{url('/')}}/index.php" method="GET" class="header-search-form d-none d-lg-flex">
-                
-                <input type="text" name="q" placeholder="Search for anything..." value="{{$_GET['q'] ?? ''}}">
+            <form action="{{ route('search.index') }}" method="GET" class="header-search-form d-none d-lg-flex position-relative">
+                <input type="text" name="q" class="live-search-input" placeholder="Search for anything..." value="{{ request()->query('q') }}" autocomplete="off">
                 <button type="submit"><i class="bi bi-search"></i></button>
+                <div class="live-search-results dropdown-menu w-100 shadow-lg border-0 mt-2 p-0" style="display:none; position:absolute; top:100%; z-index:1060; border-radius:12px; max-height: 400px; overflow-y: auto;"></div>
             </form>
 
             <!-- Actions Separation -->
@@ -718,7 +739,7 @@ $footerCategories = [];
                                 @endif
                                 <li><a class="dropdown-item rounded-3 py-2" href="{{url('/')}}/profile"><i class="bi bi-person-circle me-2"></i> {{__('account_settings')}}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item rounded-3 text-danger fw-bold py-2" href="{{url('/')}}/api/logout"><i class="bi bi-power me-2"></i> {{__('sign_out')}}</a></li>
+                                <li><a class="dropdown-item rounded-3 text-danger fw-bold py-2" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-power me-2"></i> {{__('sign_out')}}</a></li>
                             </ul>
                         </div>
                     @else
@@ -731,10 +752,10 @@ $footerCategories = [];
 
         <!-- Search Bar Mobile Row -->
         <div class="w-100 px-3 pb-2 d-lg-none">
-            <form action="{{url('/')}}/index.php" method="GET" class="header-search-form w-100">
-                
-                <input type="text" name="q" placeholder="Search for anything..." value="{{$_GET['q'] ?? ''}}" style="height: 38px;">
+            <form action="{{ route('search.index') }}" method="GET" class="header-search-form w-100 position-relative">
+                <input type="text" name="q" class="live-search-input" placeholder="Search for anything..." value="{{ request()->query('q') }}" style="height: 38px;" autocomplete="off">
                 <button type="submit"><i class="bi bi-search"></i></button>
+                <div class="live-search-results dropdown-menu w-100 shadow-lg border-0 mt-1 p-0" style="display:none; position:absolute; top:100%; z-index:1060; border-radius:12px; max-height: 350px; overflow-y: auto;"></div>
             </form>
         </div>
 
@@ -1097,7 +1118,12 @@ $footerCategories = [];
 
 @endif
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <!-- Leaflet JS (for maps) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1355,5 +1381,111 @@ $footerCategories = [];
 </script>
 @endif
 
+<style>
+.live-search-results .dropdown-item {
+    transition: background-color 0.2s;
+    white-space: normal;
+}
+.live-search-results .dropdown-item:hover {
+    background-color: #f8fafc;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInputs = document.querySelectorAll('.live-search-input');
+    
+    searchInputs.forEach(input => {
+        let debounceTimer;
+        const resultsContainer = input.parentElement.querySelector('.live-search-results');
+        
+        input.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+            
+            debounceTimer = setTimeout(() => {
+                fetch(`{{ route('search.index') }}?q=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    const hasProducts = data.products && data.products.length > 0;
+                    const hasProperties = data.properties && data.properties.length > 0;
+                    
+                    if (!hasProducts && !hasProperties) {
+                        html = `<div class="p-3 text-center text-muted small">No results found for "${query}"</div>`;
+                    } else {
+                        if (hasProducts) {
+                            html += `<div class="px-3 py-2 bg-light border-bottom text-muted small fw-bold text-uppercase">Products</div>`;
+                            data.products.forEach(product => {
+                                const img = product.image_url || 'https://placehold.co/100x100/eeeeee/999999?text=No+Image';
+                                const price = Number(product.price).toLocaleString() + ' ' + (product.price_unit || 'RWF');
+                                html += `
+                                    <a href="/products/${product.id}" class="dropdown-item d-flex align-items-center gap-3 py-2 border-bottom">
+                                        <img src="${img}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div class="fw-bold text-truncate" style="font-size: 0.85rem;">${product.title}</div>
+                                            <div class="text-primary fw-bold" style="font-size: 0.75rem;">${price}</div>
+                                        </div>
+                                    </a>
+                                `;
+                            });
+                        }
+                        
+                        if (hasProperties) {
+                            html += `<div class="px-3 py-2 bg-light border-bottom text-muted small fw-bold text-uppercase">Properties</div>`;
+                            data.properties.forEach(property => {
+                                const price = Number(property.price).toLocaleString() + ' RWF';
+                                html += `
+                                    <a href="/properties/${property.id}" class="dropdown-item d-flex align-items-center gap-3 py-2 border-bottom">
+                                        <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-buildings text-secondary"></i>
+                                        </div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div class="fw-bold text-truncate" style="font-size: 0.85rem;">${property.title}</div>
+                                            <div class="text-primary fw-bold" style="font-size: 0.75rem;">${price}</div>
+                                        </div>
+                                    </a>
+                                `;
+                            });
+                        }
+                    }
+                    
+                    resultsContainer.innerHTML = html;
+                    resultsContainer.style.display = 'block';
+                })
+                .catch(error => console.error('Search error:', error));
+            }, 300); // 300ms debounce
+        });
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!input.contains(e.target) && !resultsContainer.contains(e.target)) {
+                resultsContainer.style.display = 'none';
+            }
+        });
+        
+        // Show dropdown if input is clicked and has value
+        input.addEventListener('focus', function() {
+            if (this.value.trim().length >= 2 && resultsContainer.innerHTML !== '') {
+                resultsContainer.style.display = 'block';
+            }
+        });
+    });
+});
+</script>
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+    @csrf
+</form>
 </body>
 </html>

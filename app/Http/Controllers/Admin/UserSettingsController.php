@@ -216,4 +216,65 @@ class UserSettingsController extends Controller
             return redirect()->back()->with('error', "Database backup failed: " . $e->getMessage());
         }
     }
+
+    /**
+     * Clear Cache and Optimize
+     */
+    public function optimizeSystem(Request $request)
+    {
+        try {
+            $type = $request->input('type');
+            if ($type === 'view') {
+                \Illuminate\Support\Facades\Artisan::call('view:clear');
+                $msg = "View cache cleared.";
+            } elseif ($type === 'route') {
+                \Illuminate\Support\Facades\Artisan::call('route:clear');
+                $msg = "Route cache cleared.";
+            } else {
+                \Illuminate\Support\Facades\Artisan::call('cache:clear');
+                $msg = "Application cache cleared.";
+            }
+            return redirect()->back()->with('success', "System Optimized: {$msg}");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', "Optimization failed: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Create Storage Link
+     */
+    public function storageLink()
+    {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('storage:link');
+            return redirect()->back()->with('success', "Storage directory successfully linked.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', "Storage link failed: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download Laravel Logs
+     */
+    public function downloadLogs()
+    {
+        $logFile = storage_path('logs/laravel.log');
+        if (file_exists($logFile)) {
+            return response()->download($logFile, 'system_log_' . date('Y-m-d') . '.log');
+        }
+        return redirect()->back()->with('error', "Log file is currently empty or missing.");
+    }
+
+    /**
+     * Clear Laravel Logs
+     */
+    public function clearLogs()
+    {
+        $logFile = storage_path('logs/laravel.log');
+        if (file_exists($logFile)) {
+            file_put_contents($logFile, "");
+            return redirect()->back()->with('success', "System logs cleared successfully.");
+        }
+        return redirect()->back()->with('error', "Log file not found.");
+    }
 }

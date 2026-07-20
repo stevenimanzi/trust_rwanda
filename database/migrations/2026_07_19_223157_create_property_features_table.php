@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('property_features', function (Blueprint $table) {
-            $table->integer('id');
+            $table->id();
             $table->integer('property_id');
             $table->string('feature_name', 100);
             $table->string('feature_value', 255);

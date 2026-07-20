@@ -8,7 +8,28 @@
         <h3 class="fw-800 text-dark mb-1">Welcome back, {{ auth()->user()->full_name ?? 'Admin' }}! 👋</h3>
         <p class="text-muted fw-medium mb-0">Track all your marketplace activity in one place</p>
     </div>
-    <button class="hz-dropdown-btn border shadow-sm"><i class="bi bi-calendar3"></i> Last 30 days <i class="bi bi-chevron-down ms-2"></i></button>
+    <div class="dropdown">
+        @php
+            $rangeText = 'Last 6 Months';
+            if(isset($range)) {
+                if($range == '7') $rangeText = 'Last 7 Days';
+                elseif($range == '30') $rangeText = 'Last 30 Days';
+                elseif($range == '90') $rangeText = 'Last 3 Months';
+                elseif($range == 'all') $rangeText = 'All Time';
+            }
+        @endphp
+        <button class="hz-dropdown-btn border shadow-sm" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-calendar3"></i> {{ $rangeText }} <i class="bi bi-chevron-down ms-2"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-1">
+            <li><a class="dropdown-item py-2 fw-medium {{ (isset($range) && $range == '7') ? 'active bg-primary text-white' : '' }}" href="?range=7">Last 7 Days</a></li>
+            <li><a class="dropdown-item py-2 fw-medium {{ (isset($range) && $range == '30') ? 'active bg-primary text-white' : '' }}" href="?range=30">Last 30 Days</a></li>
+            <li><a class="dropdown-item py-2 fw-medium {{ (isset($range) && $range == '90') ? 'active bg-primary text-white' : '' }}" href="?range=90">Last 3 Months</a></li>
+            <li><a class="dropdown-item py-2 fw-medium {{ (!isset($range) || $range == '180') ? 'active bg-primary text-white' : '' }}" href="?range=180">Last 6 Months</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item py-2 fw-medium {{ (isset($range) && $range == 'all') ? 'active bg-primary text-white' : '' }}" href="?range=all">All Time</a></li>
+        </ul>
+    </div>
 </div>
 
 <!-- KPI Cards -->
@@ -21,7 +42,7 @@
                 </div>
                 <div class="hz-icon-btn shadow-sm" style="background: var(--hz-primary-light); color: var(--hz-primary);"><i class="bi bi-wallet2"></i></div>
             </div>
-            <div class="hz-kpi-value mb-2">{{ number_format($revenue) }} <span class="fs-6 text-muted">RWF</span></div>
+            <div class="hz-kpi-value mb-2"><span id="kpi-revenue">{{ number_format($revenue) }}</span> <span class="fs-6 text-muted">RWF</span></div>
         </div>
     </div>
     <div class="col-6 col-md-6 col-xl-3">
@@ -32,7 +53,7 @@
                 </div>
                 <div class="hz-icon-btn shadow-sm" style="background: var(--hz-secondary-light); color: var(--hz-secondary);"><i class="bi bi-shop"></i></div>
             </div>
-            <div class="hz-kpi-value mb-2">{{ number_format($totalVendors) }}</div>
+            <div class="hz-kpi-value mb-2" id="kpi-merchants">{{ number_format($totalVendors) }}</div>
         </div>
     </div>
     <div class="col-6 col-md-6 col-xl-3">
@@ -43,7 +64,7 @@
                 </div>
                 <div class="hz-icon-btn shadow-sm" style="background: var(--hz-tertiary-light); color: var(--hz-tertiary);"><i class="bi bi-cart-check"></i></div>
             </div>
-            <div class="hz-kpi-value mb-2">{{ number_format($totalOrders) }}</div>
+            <div class="hz-kpi-value mb-2" id="kpi-transactions">{{ number_format($totalOrders) }}</div>
         </div>
     </div>
     <div class="col-6 col-md-6 col-xl-3">
@@ -54,7 +75,7 @@
                 </div>
                 <div class="hz-icon-btn shadow-sm" style="background: #f3e8ff; color: #9333ea;"><i class="bi bi-people"></i></div>
             </div>
-            <div class="hz-kpi-value mb-2">{{ number_format($totalUsers) }}</div>
+            <div class="hz-kpi-value mb-2" id="kpi-users">{{ number_format($totalUsers) }}</div>
         </div>
     </div>
 </div>
@@ -67,7 +88,18 @@
                     <div class="hz-card-title">KPI performance</div>
                     <div class="hz-card-subtitle">Your platform revenue performance</div>
                 </div>
-                <button class="hz-dropdown-btn border"><i class="bi bi-calendar"></i> Last 6 months <i class="bi bi-chevron-down ms-1"></i></button>
+                <div class="dropdown">
+                    <button class="hz-dropdown-btn border" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-calendar"></i> {{ $rangeText }} <i class="bi bi-chevron-down ms-1"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-1">
+                        <li><a class="dropdown-item py-2 fw-medium {{ (isset($range) && $range == '7') ? 'active bg-primary text-white' : '' }}" href="?range=7">Last 7 Days</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium {{ (isset($range) && $range == '30') ? 'active bg-primary text-white' : '' }}" href="?range=30">Last 30 Days</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium {{ (isset($range) && $range == '90') ? 'active bg-primary text-white' : '' }}" href="?range=90">Last 3 Months</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium {{ (!isset($range) || $range == '180') ? 'active bg-primary text-white' : '' }}" href="?range=180">Last 6 Months</a></li>
+                        <li><a class="dropdown-item py-2 fw-medium {{ (isset($range) && $range == 'all') ? 'active bg-primary text-white' : '' }}" href="?range=all">All Time</a></li>
+                    </ul>
+                </div>
             </div>
             <div class="d-flex align-items-center gap-3 mb-4">
                 <div class="hz-kpi-value" style="font-size:2.5rem;">{{ number_format($revenue) }} <span class="fs-6 text-muted fw-normal">RWF</span></div>
@@ -186,13 +218,13 @@ document.addEventListener('DOMContentLoaded', function() {
     gradient.addColorStop(0, 'rgba(255, 106, 62, 0.4)'); // hz-primary
     gradient.addColorStop(1, 'rgba(255, 106, 62, 0)');
 
-    new Chart(ctx, {
+    let revenueChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: {!! json_encode($months ?? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']) !!},
+            labels: {!! json_encode($chartLabels ?? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']) !!},
             datasets: [{
                 label: 'Revenue (RWF)',
-                data: {!! json_encode($monthlyRevenue ?? [0, 0, 0, 0, 0, 0]) !!},
+                data: {!! json_encode($chartData ?? [0, 0, 0, 0, 0, 0]) !!},
                 borderColor: '#ff6a3e', // hz-primary
                 backgroundColor: gradient,
                 borderWidth: 3,
@@ -244,6 +276,31 @@ document.addEventListener('DOMContentLoaded', function() {
             },
         }
     });
+
+    // Real-Time Polling Engine (Every 15 seconds)
+    setInterval(() => {
+        const currentUrl = new URL(window.location.href);
+        const activeRange = currentUrl.searchParams.get('range') || '180';
+        fetch(`{{ route('admin.dashboard') }}?ajax=1&range=${activeRange}`)
+            .then(res => res.json())
+            .then(data => {
+                // Update KPIs seamlessly
+                if(data.kpis) {
+                    document.getElementById('kpi-revenue').innerText = data.kpis.revenue;
+                    document.getElementById('kpi-merchants').innerText = data.kpis.totalVendors;
+                    document.getElementById('kpi-transactions').innerText = data.kpis.totalOrders;
+                    document.getElementById('kpi-users').innerText = data.kpis.totalUsers;
+                }
+                
+                // Update Chart smoothly
+                if(data.chartLabels && data.chartData) {
+                    revenueChart.data.labels = data.chartLabels;
+                    revenueChart.data.datasets[0].data = data.chartData;
+                    revenueChart.update();
+                }
+            })
+            .catch(e => console.error("Real-time sync failed:", e));
+    }, 15000);
 });
 </script>
 @endsection

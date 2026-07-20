@@ -29,7 +29,18 @@ class UserController extends Controller
                     ->whereColumn('subscriptions.user_id', 'users.id')
                     ->orderBy('end_date', 'desc')
                     ->limit(1);
-            }, 'sub_end_date');
+            }, 'sub_end_date')
+            ->selectSub(function ($q) {
+                $q->selectRaw('SUM(quantity * price_at_purchase)')
+                    ->from('order_items')
+                    ->whereColumn('order_items.vendor_id', 'users.id');
+            }, 'vendor_revenue')
+            ->selectSub(function ($q) {
+                $q->selectRaw('COUNT(DISTINCT order_id)')
+                    ->from('order_items')
+                    ->whereColumn('order_items.vendor_id', 'users.id');
+            }, 'vendor_fulfillments')
+            ->withCount('products');
 
         if ($filterRole !== 'all') {
             $query->where('role', $filterRole);
@@ -43,7 +54,7 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->orderBy('created_at', 'desc')->get();
+        $users = $query->orderBy('created_at', 'desc')->paginate(20);
 
         // Calculate Stats
         $totalUsers = User::count();
@@ -71,18 +82,25 @@ class UserController extends Controller
             'role' => 'required|in:customer,vendor,admin',
             'shop_name' => 'nullable|string|max:255',
             'new_password' => 'nullable|string|min:6',
+            'phone' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
+            'shop_description' => 'nullable|string',
         ]);
 
         $updateData = [
             'full_name' => trim($request->input('full_name')),
             'email' => trim($request->input('email')),
             'role' => $request->input('role'),
+            'phone' => trim($request->input('phone')),
+            'address' => trim($request->input('address')),
         ];
 
         if ($request->input('role') === 'vendor') {
             $updateData['shop_name'] = trim($request->input('shop_name'));
+            $updateData['shop_description'] = trim($request->input('shop_description'));
         } else {
             $updateData['shop_name'] = null;
+            $updateData['shop_description'] = null;
         }
 
         if ($request->filled('new_password')) {

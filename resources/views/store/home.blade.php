@@ -1226,7 +1226,7 @@
                 <div class="flash-card">
                     <span class="flash-disc-tag">-{{$disc}}%</span>
                     <div class="flash-card-img" onclick="window.location.href='products/{{$p['id']}}'">
-                        <img src="{{kura_product_image_url($p['image_url'] ?? null, 'https://placehold.co/200')}}" onerror="this.src='https://placehold.co/200?text=Product+Image';">
+                        <img src="{{kura_product_image_url($p->image_url, 'https://placehold.co/200')}}" onerror="this.src='https://placehold.co/200?text=Product+Image';">
                     </div>
                     <!-- Shop Name Badge -->
                     <div class="t-shop-badge" style="font-size: 0.65rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
@@ -1277,7 +1277,7 @@
             <div class="trend-card-custom">
                 {!! $badge !!}
                 <div class="t-img-box" onclick="window.location.href='products/{{$p['id']}}'">
-                    <img src="{{kura_product_image_url($p['image_url'] ?? null, 'https://placehold.co/200')}}" onerror="this.src='https://placehold.co/200?text=Product';">
+                    <img src="{{kura_product_image_url($p->image_url, 'https://placehold.co/200')}}" onerror="this.src='https://placehold.co/200?text=Product';">
                 </div>
                 <div class="t-stock-lbl">
                     <i class="bi bi-box-seam"></i> In stock {{$stock}} items
@@ -1338,7 +1338,7 @@
         <div class="trend-card-custom">
             <span class="t-badge new">New</span>
             <div class="t-img-box" onclick="window.location.href='products/{{$p['id']}}'">
-                <img src="{{kura_product_image_url($p['image_url'] ?? null, 'https://placehold.co/200')}}" onerror="this.src='https://placehold.co/200?text=Product';">
+                <img src="{{kura_product_image_url($p->image_url, 'https://placehold.co/200')}}" onerror="this.src='https://placehold.co/200?text=Product';">
             </div>
             <div class="t-stock-lbl">
                 <i class="bi bi-box-seam"></i> In stock {{$stock}} items

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('property_images', function (Blueprint $table) {
-            $table->integer('id');
+            $table->id();
             $table->integer('property_id');
             $table->string('image_url', 255);
             $table->integer('sort_order')->default(0);

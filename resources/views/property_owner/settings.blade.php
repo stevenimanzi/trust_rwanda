@@ -124,7 +124,7 @@
     $firstName = $parts[0] ?? '';
     $lastName = $parts[1] ?? '';
 @endphp
-<div class="container-fluid p-0">
+<div>
     <!-- Page Header -->
     <div class="page-header mb-4">
         <div class="page-header-content">

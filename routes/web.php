@@ -34,6 +34,7 @@ use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,7 @@ Route::get('/terms', [PageController::class, 'terms'])->name('pages.terms');
 Route::get('/compliances', [PageController::class, 'compliances'])->name('pages.compliances');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/properties', [App\Http\Controllers\FrontendPropertyController::class, 'index'])->name('properties.index');
@@ -126,6 +128,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'updateInfo'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/logout', [AuthController::class, 'logout']);
 });
 
 // ==========================================
@@ -193,6 +196,9 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
 // ==========================================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/global-search', [AdminController::class, 'globalSearch'])->name('global_search');
+    Route::post('/notifications/mark-read', [AdminController::class, 'markNotificationsRead'])->name('notifications.mark_read');
+
     Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
     Route::get('/sms-logs', [AdminController::class, 'smsLogs'])->name('sms_logs');
     Route::post('/sms-logs/broadcast', [AdminController::class, 'broadcastSms'])->name('sms_logs.broadcast');
@@ -215,6 +221,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/settings/business', [UserSettingsController::class, 'saveBusiness'])->name('settings.business');
     Route::post('/settings/maintenance', [UserSettingsController::class, 'toggleMaintenance'])->name('settings.maintenance');
     Route::post('/settings/backup', [UserSettingsController::class, 'backupDatabase'])->name('settings.backup');
+    Route::post('/settings/ops/optimize', [UserSettingsController::class, 'optimizeSystem'])->name('settings.ops.optimize');
+    Route::post('/settings/ops/storage-link', [UserSettingsController::class, 'storageLink'])->name('settings.ops.storage_link');
+    Route::get('/settings/ops/logs', [UserSettingsController::class, 'downloadLogs'])->name('settings.ops.logs.download');
+    Route::post('/settings/ops/logs/clear', [UserSettingsController::class, 'clearLogs'])->name('settings.ops.logs.clear');
 
     Route::get('/ads', [AdController::class, 'index'])->name('ads.index');
     Route::post('/ads/deploy', [AdController::class, 'deployCampaign'])->name('ads.deploy');

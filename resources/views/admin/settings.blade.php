@@ -26,7 +26,7 @@
     <div class="col-lg-8 col-xl-9">
         <div class="settings-sections">
             <!-- PROFILE TAB -->
-            <div id="section-profile" class="settings-section mb-5" style="scroll-margin-top: 100px;">
+            <div id="section-profile" class="settings-section mb-5">
                 <div class="card-settings">
                     <h4 class="settings-header"><i class="bi bi-person-fill-gear"></i> Administrator Profile</h4>
                     <form method="POST" action="{{ route('admin.settings.profile') }}">
@@ -63,7 +63,7 @@
             </div>
 
             <!-- SECURITY TAB -->
-            <div id="section-security" class="settings-section mb-5" style="scroll-margin-top: 100px;">
+            <div id="section-security" class="settings-section mb-5" style="display: none;">
                 <div class="card-settings">
                     <h4 class="settings-header"><i class="bi bi-shield-lock"></i> Security Credentials</h4>
                     <form method="POST" action="{{ route('admin.settings.password') }}">
@@ -99,7 +99,7 @@
             </div>
 
             <!-- GENERAL / BUSINESS TAB -->
-            <div id="section-general" class="settings-section mb-5" style="scroll-margin-top: 100px;">
+            <div id="section-general" class="settings-section mb-5" style="display: none;">
                 <div class="card-settings">
                     <h4 class="settings-header"><i class="bi bi-buildings"></i> General Business Settings</h4>
                     <form method="POST" action="{{ route('admin.settings.business') }}">
@@ -167,29 +167,35 @@
             </div>
 
             <!-- BRANDING TAB -->
-            <div id="section-branding" class="settings-section mb-5" style="scroll-margin-top: 100px;">
+            <div id="section-branding" class="settings-section mb-5" style="display: none;">
                 <div class="card-settings">
                     <h4 class="settings-header"><i class="bi bi-palette"></i> Brand Assets</h4>
                     <form method="POST" action="{{ route('admin.settings.branding') }}" enctype="multipart/form-data">
                         @csrf
-                        <div class="row g-5 mb-4">
+                        <div class="row g-4 mb-3">
                             <div class="col-md-6">
-                                <div class="p-4 bg-light rounded-4 border h-100 text-center">
-                                    <label class="form-label mb-3 d-block">System Logo (Main)</label>
-                                    <div class="bg-white p-3 rounded-3 shadow-sm d-inline-block mb-4">
-                                        <img id="siteLogoPreview" src="{{ kura_logo_image_url($systemSettings['site_logo'] ?? null, 'https://placehold.co/150x50?text=LOGO') }}" style="height: 50px; max-width: 100%; object-fit: contain;">
+                                <div class="p-3 bg-light rounded-4 border text-center">
+                                    <label class="form-label mb-2 fw-bold text-muted small d-block">System Logo (Main)</label>
+                                    <div class="bg-white p-2 rounded-3 shadow-sm d-inline-block mb-3">
+                                        <img id="siteLogoPreview" src="{{ !empty($systemSettings['site_logo']) ? asset('assets/uploads/logos/' . $systemSettings['site_logo']) : 'https://placehold.co/150x50/f8fafc/94a3b8?text=LOGO' }}" style="height: 40px; max-width: 100%; object-fit: contain;">
                                     </div>
-                                    <input type="file" name="site_logo" class="form-control-modern w-100" accept="image/*" onchange="previewAsset(this, 'siteLogoPreview')">
+                                    <div class="position-relative">
+                                        <input type="file" name="site_logo" id="site_logo_input" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer;" accept="image/*" onchange="previewAsset(this, 'siteLogoPreview')">
+                                        <label for="site_logo_input" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-3"><i class="bi bi-upload me-1"></i> Upload Image</label>
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="col-md-6">
-                                <div class="p-4 bg-light rounded-4 border h-100 text-center">
-                                    <label class="form-label mb-3 d-block">Favicon (Browser Tab Icon)</label>
-                                    <div class="bg-white p-3 rounded-3 shadow-sm d-inline-block mb-4">
-                                        <img id="siteFaviconPreview" src="{{ kura_logo_image_url($systemSettings['site_favicon'] ?? null, 'https://placehold.co/32x32?text=ICO') }}" style="height: 32px; width: 32px; object-fit: contain;" class="rounded-circle shadow-sm">
+                                <div class="p-3 bg-light rounded-4 border text-center">
+                                    <label class="form-label mb-2 fw-bold text-muted small d-block">Favicon (Tab Icon)</label>
+                                    <div class="bg-white p-2 rounded-3 shadow-sm d-inline-block mb-3">
+                                        <img id="siteFaviconPreview" src="{{ !empty($systemSettings['site_favicon']) ? asset('assets/uploads/logos/' . $systemSettings['site_favicon']) : 'https://placehold.co/32x32/f8fafc/94a3b8?text=ICO' }}" style="height: 32px; width: 32px; object-fit: contain;" class="rounded-circle">
                                     </div>
-                                    <input type="file" name="site_favicon" class="form-control-modern w-100" accept="image/x-icon,image/png" onchange="previewAsset(this, 'siteFaviconPreview')">
+                                    <div class="position-relative">
+                                        <input type="file" name="site_favicon" id="site_favicon_input" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor:pointer;" accept="image/x-icon,image/png" onchange="previewAsset(this, 'siteFaviconPreview')">
+                                        <label for="site_favicon_input" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-3"><i class="bi bi-upload me-1"></i> Upload Icon</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -201,33 +207,105 @@
                 </div>
             </div>
 
-            <!-- SYSTEM OPS TAB -->
-            <div id="section-system" class="settings-section mb-5" style="scroll-margin-top: 100px;">
-                <div class="card-settings mb-4" style="border: 2px solid #fee2e2;">
-                    <h4 class="settings-header text-danger"><i class="bi bi-exclamation-triangle"></i> Maintenance Protocol</h4>
-                    <p class="text-muted mb-4">Activating maintenance mode will lock all customers and vendors out of the platform. Only administrators will have access.</p>
-                    
-                    <div class="p-4 rounded-4 bg-danger bg-opacity-10 border border-danger border-opacity-25">
-                        <div class="form-check form-switch d-flex align-items-center gap-4 m-0">
-                            <input class="form-check-input fs-3" type="checkbox" id="maintNode" {{ $isMaintActive ? 'checked' : '' }}>
-                            <div>
-                                <label class="form-check-label fw-bold text-danger fs-5 mb-1" for="maintNode">Maintenance Gatekeeper</label>
-                                <p class="small text-danger opacity-75 m-0">Currently: <span id="maintStatusText" class="fw-bold">{{ $isMaintActive ? 'ACTIVE (Platform Locked)' : 'INACTIVE (Platform Live)' }}</span></p>
+            <div id="section-system" class="settings-section mb-5" style="display: none;">
+                <div class="card-settings mb-4" style="border: 1px solid #fee2e2;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="settings-header text-danger mb-1"><i class="bi bi-exclamation-triangle"></i> Maintenance Protocol</h5>
+                            <p class="text-muted small m-0">Lock all customers and vendors out of the platform. Only admins will have access.</p>
+                        </div>
+                        <div class="form-check form-switch m-0 d-flex align-items-center">
+                            <input class="form-check-input fs-4 m-0 me-3" type="checkbox" id="maintNode" {{ $isMaintActive ? 'checked' : '' }}>
+                            <span id="maintStatusText" class="fw-bold small {{ $isMaintActive ? 'text-danger' : 'text-success' }}">{{ $isMaintActive ? 'ACTIVE' : 'INACTIVE' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card-settings h-100 mb-0">
+                            <h5 class="settings-header mb-2"><i class="bi bi-cpu text-muted"></i> System Diagnostics</h5>
+                            <div class="bg-light rounded-3 border p-2">
+                                <ul class="list-group list-group-flush bg-transparent">
+                                    <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center border-bottom px-2 py-1">
+                                        <span class="text-muted fw-bold small uppercase">PHP Engine</span>
+                                        <span class="fw-bold text-dark small">{{ phpversion() }}</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center border-bottom px-2 py-1">
+                                        <span class="text-muted fw-bold small uppercase">Laravel</span>
+                                        <span class="fw-bold text-dark small">{{ app()->version() }}</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center border-bottom px-2 py-1">
+                                        <span class="text-muted fw-bold small uppercase">Environment</span>
+                                        <span class="fw-bold text-dark small">{{ env('APP_ENV', 'production') }}</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-2 py-1">
+                                        <span class="text-muted fw-bold small uppercase">Timezone</span>
+                                        <span class="fw-bold text-dark small">{{ config('app.timezone') }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card-settings h-100 mb-0">
+                            <h5 class="settings-header mb-2"><i class="bi bi-lightning-charge text-warning"></i> Cache Config</h5>
+                            <p class="text-muted" style="font-size: 0.75rem;">Clear stale cache files to ensure the system serves the latest assets.</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <form method="POST" action="{{ route('admin.settings.ops.optimize') }}" class="flex-grow-1">
+                                    @csrf <input type="hidden" name="type" value="app">
+                                    <button class="btn btn-light border btn-sm fw-bold w-100"><i class="bi bi-hdd-network text-primary me-1"></i> App</button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.settings.ops.optimize') }}" class="flex-grow-1">
+                                    @csrf <input type="hidden" name="type" value="view">
+                                    <button class="btn btn-light border btn-sm fw-bold w-100"><i class="bi bi-window-stack text-info me-1"></i> View</button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.settings.ops.optimize') }}" class="flex-grow-1">
+                                    @csrf <input type="hidden" name="type" value="route">
+                                    <button class="btn btn-light border btn-sm fw-bold w-100"><i class="bi bi-sign-turn-right text-success me-1"></i> Route</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card-settings">
-                    <h4 class="settings-header"><i class="bi bi-database"></i> Database Management</h4>
-                    <p class="text-muted mb-4">Download a complete snapshot of the database. Keep this file secure as it contains all user and transaction data.</p>
-                    
-                    <form method="POST" action="{{ route('admin.settings.backup') }}" class="bg-light p-4 rounded-4 border text-center">
-                        @csrf
-                        <i class="bi bi-server display-4 text-primary opacity-50 mb-3 d-block"></i>
-                        <h6 class="fw-bold mb-3">System SQL Snapshot</h6>
-                        <button type="submit" class="btn btn-dark btn-modern border-0"><i class="bi bi-cloud-arrow-down me-2"></i> Generate Full Backup</button>
-                    </form>
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card-settings h-100 mb-0">
+                            <h5 class="settings-header mb-2"><i class="bi bi-folder-symlink text-info"></i> File System</h5>
+                            <p class="text-muted" style="font-size: 0.75rem;">Generate symbolic links for public storage (vendors/products).</p>
+                            <form method="POST" action="{{ route('admin.settings.ops.storage_link') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-primary btn-sm fw-bold w-100 rounded-pill"><i class="bi bi-link-45deg"></i> Link Storage Directory</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card-settings h-100 mb-0">
+                            <h5 class="settings-header mb-2"><i class="bi bi-bug text-danger"></i> Error Logs</h5>
+                            <p class="text-muted" style="font-size: 0.75rem;">Analyze or clear system logs to monitor silent failures.</p>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('admin.settings.ops.logs.download') }}" class="btn btn-dark btn-sm fw-bold flex-grow-1 rounded-pill"><i class="bi bi-download"></i> Download</a>
+                                <form method="POST" action="{{ route('admin.settings.ops.logs.clear') }}" class="flex-grow-1" onsubmit="return confirm('Clear all logs?');">
+                                    @csrf
+                                    <button class="btn btn-outline-danger btn-sm fw-bold w-100 rounded-pill"><i class="bi bi-trash3"></i> Purge</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-settings mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="settings-header mb-1"><i class="bi bi-server text-secondary"></i> Database Backup</h5>
+                            <p class="text-muted small m-0">Download a complete snapshot of the database.</p>
+                        </div>
+                        <form method="POST" action="{{ route('admin.settings.backup') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-dark fw-bold rounded-pill px-4 btn-sm"><i class="bi bi-cloud-arrow-down me-1"></i> Generate SQL</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -277,24 +355,41 @@
         });
     }
 
-    // Scroll highlighter for active section
-    window.addEventListener('scroll', function() {
-        let current = 'section-profile';
-        const sections = document.querySelectorAll('.settings-section');
-        const navLinks = document.querySelectorAll('#settingsTabs .nav-link');
+    // Handle tab switching
+    function switchSection(id) {
+        // Prevent default link behavior if called from an inline event (already handled via URL hash)
         
-        sections.forEach(sec => {
-            if (window.scrollY >= (sec.offsetTop - 180)) {
-                current = sec.getAttribute('id');
-            }
+        // Hide all sections
+        document.querySelectorAll('.settings-section').forEach(sec => {
+            sec.style.display = 'none';
         });
         
-        navLinks.forEach(link => {
+        // Show target section
+        const target = document.getElementById(id);
+        if (target) {
+            target.style.display = 'block';
+        }
+        
+        // Update active nav link
+        document.querySelectorAll('#settingsTabs .nav-link').forEach(link => {
             link.classList.remove('active');
-            if (link.getAttribute('href') === '#' + current) {
+            if (link.getAttribute('href') === '#' + id) {
                 link.classList.add('active');
             }
         });
+        
+        // Update URL hash without jumping
+        history.replaceState(null, null, '#' + id);
+    }
+    
+    // Check hash on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const hash = window.location.hash.substring(1);
+        if (hash && document.getElementById(hash)) {
+            switchSection(hash);
+        } else {
+            switchSection('section-profile');
+        }
     });
 
     // Preview uploaded brand asset
@@ -307,38 +402,28 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-
-    function switchSection(id) {
-        const el = document.getElementById(id);
-        if (el) {
-            window.scrollTo({
-                top: el.offsetTop - 100,
-                behavior: 'smooth'
-            });
-        }
-    }
 </script>
 @endsection
 
 @section('styles')
 <style>
     .card-settings { 
-        background: var(--adm-card); 
-        border-radius: 24px; 
-        border: 1px solid var(--border); 
-        padding: 2.5rem; 
-        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05); 
+        background: var(--hz-surface); 
+        border-radius: 20px; 
+        border: 1px solid var(--hz-border); 
+        padding: 1.5rem; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); 
     }
     
     .nav-settings {
         background: white;
         border-radius: 20px;
         padding: 1rem;
-        border: 1px solid var(--border);
+        border: 1px solid var(--hz-border);
         box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.03); 
     }
     .nav-settings .nav-link { 
-        color: #64748b; 
+        color: var(--hz-text-muted); 
         font-weight: 700; 
         padding: 1rem 1.25rem; 
         border-radius: 14px; 
@@ -350,35 +435,35 @@
     }
     .nav-settings .nav-link i { font-size: 1.2rem; }
     .nav-settings .nav-link:hover {
-        background: #f1f5f9;
-        color: var(--adm-accent);
+        background: var(--hz-bg);
+        color: var(--hz-primary);
     }
     .nav-settings .nav-link.active { 
-        background: linear-gradient(135deg, var(--adm-accent) 0%, #3730a3 100%); 
+        background: var(--hz-primary); 
         color: white; 
         box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
     }
 
-    .form-label { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+    .form-label { font-size: 0.75rem; font-weight: 800; color: var(--hz-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
     
     .form-control-modern { 
-        background: #f8fafc; 
-        color: var(--adm-text); 
-        border: 2px solid var(--border); 
+        background: var(--hz-bg); 
+        color: var(--hz-dark); 
+        border: 2px solid transparent; 
         border-radius: 14px; 
         padding: 0.85rem 1.2rem; 
         font-weight: 600; 
         transition: all 0.3s ease;
     }
     .form-control-modern:focus { 
-        background: #ffffff; 
-        border-color: var(--adm-accent); 
-        color: var(--adm-text); 
-        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); 
+        background: var(--hz-surface); 
+        border-color: var(--hz-primary); 
+        color: var(--hz-dark); 
+        box-shadow: 0 0 0 4px var(--hz-primary-light); 
     }
     
     .btn-modern {
-        background: linear-gradient(135deg, var(--adm-accent) 0%, #3730a3 100%);
+        background: var(--hz-primary);
         color: white;
         border: none;
         padding: 0.8rem 2rem;
@@ -388,24 +473,25 @@
     }
     .btn-modern:hover {
         transform: translateY(-2px);
+        background: var(--hz-primary-hover);
         box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
         color: white;
     }
 
-    .form-switch .form-check-input { width: 3.5em; height: 1.7em; cursor: pointer; background-color: #cbd5e1; border-color: var(--border); }
-    .form-switch .form-check-input:checked { background-color: #ef4444; border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+    .form-switch .form-check-input { width: 3.5em; height: 1.7em; cursor: pointer; background-color: #cbd5e1; border-color: var(--hz-border); }
+    .form-switch .form-check-input:checked { background-color: var(--hz-danger); border-color: var(--hz-danger); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
 
     .settings-header {
         font-weight: 800;
-        color: #1e293b;
+        color: var(--hz-dark);
         margin-bottom: 2rem;
         display: flex;
         align-items: center;
         gap: 12px;
     }
     .settings-header i {
-        background: rgba(79, 70, 229, 0.1);
-        color: var(--adm-accent);
+        background: var(--hz-primary-light);
+        color: var(--hz-primary);
         padding: 10px;
         border-radius: 12px;
     }

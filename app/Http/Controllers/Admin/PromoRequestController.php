@@ -18,7 +18,7 @@ class PromoRequestController extends Controller
             ->where('products.promo_status', 'pending')
             ->select('products.*', 'users.shop_name', 'users.phone as vendor_phone')
             ->orderBy('products.updated_at', 'asc')
-            ->get();
+            ->paginate(20);
 
         return view('admin.promo_requests', compact('requests'));
     }

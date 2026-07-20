@@ -146,7 +146,7 @@
 @endsection
 
 @section('content')
-<div class="container-fluid p-0">
+
     <!-- Header with Add Property button -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
@@ -246,7 +246,7 @@
                 </button>
                 
                 <!-- Category Segmented Control -->
-                <div class="bg-light p-1 rounded-pill d-inline-flex border shadow-sm">
+                <div class="bg-light p-1 rounded-pill d-flex d-md-inline-flex border shadow-sm" style="overflow-x: auto; white-space: nowrap; max-width: 100%;">
                     <a href="?type=all&status={{ urlencode($filterStatus) }}&q={{ urlencode($searchQuery) }}" class="text-decoration-none px-3 py-1 rounded-pill fw-bold {{ ($filterType === 'all') ? 'bg-white text-primary shadow-sm' : 'text-muted' }}" style="font-size: 0.85rem; transition: 0.2s;">All Categories</a>
                     <a href="?type=house&status={{ urlencode($filterStatus) }}&q={{ urlencode($searchQuery) }}" class="text-decoration-none px-3 py-1 rounded-pill fw-bold {{ ($filterType === 'house') ? 'bg-white text-primary shadow-sm' : 'text-muted' }}" style="font-size: 0.85rem; transition: 0.2s;">Houses</a>
                     <a href="?type=apartment&status={{ urlencode($filterStatus) }}&q={{ urlencode($searchQuery) }}" class="text-decoration-none px-3 py-1 rounded-pill fw-bold {{ ($filterType === 'apartment') ? 'bg-white text-primary shadow-sm' : 'text-muted' }}" style="font-size: 0.85rem; transition: 0.2s;">Apartments</a>
@@ -256,14 +256,14 @@
             
             <div class="d-flex gap-3 flex-wrap align-items-center">
                 <!-- Status Segmented Control -->
-                <div class="bg-light p-1 rounded-pill d-inline-flex border shadow-sm">
+                <div class="bg-light p-1 rounded-pill d-flex d-md-inline-flex border shadow-sm" style="overflow-x: auto; white-space: nowrap; max-width: 100%;">
                     <a href="?type={{ urlencode($filterType) }}&status=all&q={{ urlencode($searchQuery) }}" class="text-decoration-none px-3 py-1 rounded-pill fw-bold {{ ($filterStatus === 'all') ? 'bg-white text-dark shadow-sm' : 'text-muted' }}" style="font-size: 0.85rem; transition: 0.2s;">All</a>
                     <a href="?type={{ urlencode($filterType) }}&status=active&q={{ urlencode($searchQuery) }}" class="text-decoration-none px-3 py-1 rounded-pill fw-bold {{ ($filterStatus === 'active') ? 'bg-white text-success shadow-sm' : 'text-muted' }}" style="font-size: 0.85rem; transition: 0.2s;"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem; vertical-align: middle;"></i> Active</a>
                     <a href="?type={{ urlencode($filterType) }}&status=inactive&q={{ urlencode($searchQuery) }}" class="text-decoration-none px-3 py-1 rounded-pill fw-bold {{ ($filterStatus === 'inactive') ? 'bg-white text-danger shadow-sm' : 'text-muted' }}" style="font-size: 0.85rem; transition: 0.2s;"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem; vertical-align: middle;"></i> Inactive</a>
                 </div>
 
                 <!-- Search input form -->
-                <form method="GET" action="" class="d-flex align-items-center gap-2 m-0" style="min-width: 260px;">
+                <form method="GET" action="" class="d-flex align-items-center gap-2 m-0 w-100" style="min-width: 0; max-width: 100%; flex: 1;">
                     <input type="hidden" name="type" value="{{ $filterType }}">
                     <input type="hidden" name="status" value="{{ $filterStatus }}">
                     <div class="input-group shadow-sm" style="border-radius: 50px; overflow: hidden; border: 1px solid #e2e8f0; background: #f8fafc;">
@@ -371,7 +371,7 @@
             </form>
         </div>
     </div>
-</div>
+
 
 <!-- Hidden image deletion form (Single) -->
 <form id="deletePropertyForm" method="POST" action="" style="display:none;">

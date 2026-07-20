@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->integer('id');
+            $table->id();
             $table->integer('user_id');
             $table->decimal('total_amount');
             $table->string('payment_method', 50)->default('momo');

@@ -40,7 +40,7 @@ class ProductController extends Controller
             ->select('products.*', 'users.shop_name', 'users.full_name as vendor_name')
             ->get();
 
-        $categories = Product::select('category')->distinct()->orderBy('category', 'asc')->get();
+        $categories = \App\Models\Category::orderBy('name', 'asc')->get();
 
         // Stats
         $totalProducts = Product::count();

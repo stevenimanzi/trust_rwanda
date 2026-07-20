@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\SmsLog;
+use App\Models\Product;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,65 +18,73 @@ class AdminController extends Controller
      */
     public function dashboard(Request $request)
     {
-        // Handle AJAX Real-Time Polling
-        if ($request->ajax() || $request->query('ajax') == 1) {
-            $chartLabels = [];
-            $chartData = [];
-            for ($i = 5; $i >= 0; $i--) {
-                $date = now()->subMonths($i)->format('Y-m');
-                $monthName = now()->subMonths($i)->format('M');
-                
-                $total = Order::whereRaw("strftime('%Y-%m', created_at) = ?", [$date])
-                    ->sum('total_amount');
-                    
-                $chartLabels[] = $monthName;
-                $chartData[] = (float)$total;
-            }
-            $pendingVendors = User::where('role', 'vendor')
-                ->where('is_verified', 0)
-                ->limit(4)
-                ->get();
-
-            return response()->json([
-                'chartLabels' => $chartLabels,
-                'chartData' => $chartData,
-                'pendingVendors' => $pendingVendors
-            ]);
+        $range = $request->query('range', '180'); // Default to 180 days
+        $endDate = now()->format('Y-m-d H:i:s');
+        
+        if ($range === 'all') {
+            $startDate = '2020-01-01 00:00:00';
+        } else {
+            $startDate = now()->subDays((int)$range)->format('Y-m-d 00:00:00');
         }
 
         // Stats Aggregation
-        $totalUsers = User::count();
-        $totalVendors = User::where('role', 'vendor')->count();
-        $totalOrders = Order::count();
-        $revenue = Order::where('delivery_status', '!=', 'cancelled')->sum('total_amount');
+        $totalUsers = User::whereBetween('created_at', [$startDate, $endDate])->count();
+        $totalVendors = User::where('role', 'vendor')->whereBetween('created_at', [$startDate, $endDate])->count();
+        $totalOrders = Order::whereBetween('created_at', [$startDate, $endDate])->count();
+        $revenue = Order::where('delivery_status', '!=', 'cancelled')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('total_amount');
 
-        // Last 6 months Chart data
+        // Chart data
         $chartLabels = [];
         $chartData = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()->subMonths($i)->format('Y-m');
-            $monthName = now()->subMonths($i)->format('M');
+        
+        if ($range === 'all' || (int)$range > 90) {
+            // Group by month
+            $months = min((int)$range > 0 ? ceil((int)$range / 30) : 6, 12);
+            if ($range === 'all') $months = 6;
             
-            $total = Order::whereRaw("strftime('%Y-%m', created_at) = ?", [$date])
-                ->sum('total_amount');
-                
-            $chartLabels[] = $monthName;
-            $chartData[] = (float)$total;
+            for ($i = $months - 1; $i >= 0; $i--) {
+                $date = now()->subMonths($i)->format('Y-m');
+                $monthName = now()->subMonths($i)->format('M');
+                $total = Order::whereRaw("strftime('%Y-%m', created_at) = ?", [$date])->sum('total_amount');
+                $chartLabels[] = $monthName;
+                $chartData[] = (float)$total;
+            }
+        } else {
+            // Group by days
+            $daysToShow = min((int)$range, 30);
+            for ($i = $daysToShow - 1; $i >= 0; $i--) {
+                $date = now()->subDays($i)->format('Y-m-d');
+                $dayName = now()->subDays($i)->format('M d');
+                $total = Order::whereRaw("DATE(created_at) = ?", [$date])->sum('total_amount');
+                $chartLabels[] = $dayName;
+                $chartData[] = (float)$total;
+            }
         }
 
-        $recentOrders = Order::with('customer')
-            ->orderBy('created_at', 'DESC')
-            ->limit(5)
-            ->get();
-            
-        $pendingVendors = User::where('role', 'vendor')
-            ->where('is_verified', 0)
-            ->limit(4)
-            ->get();
+        $pendingVendors = User::where('role', 'vendor')->where('is_verified', 0)->limit(4)->get();
+        
+        // Handle AJAX Real-Time Polling
+        if ($request->ajax() || $request->query('ajax') == 1) {
+            return response()->json([
+                'chartLabels' => $chartLabels,
+                'chartData' => $chartData,
+                'pendingVendors' => $pendingVendors,
+                'kpis' => [
+                    'revenue' => number_format($revenue),
+                    'totalVendors' => number_format($totalVendors),
+                    'totalOrders' => number_format($totalOrders),
+                    'totalUsers' => number_format($totalUsers)
+                ]
+            ]);
+        }
+
+        $recentOrders = Order::with('customer')->orderBy('created_at', 'DESC')->limit(5)->get();
 
         return view('admin.dashboard', compact(
             'totalUsers', 'totalVendors', 'totalOrders', 'revenue',
-            'chartLabels', 'chartData', 'recentOrders', 'pendingVendors'
+            'chartLabels', 'chartData', 'recentOrders', 'pendingVendors', 'range'
         ));
     }
 
@@ -198,5 +208,48 @@ class AdminController extends Controller
         }
 
         return redirect()->back()->with('success', "System: {$successCount} messages broadcast successfully.");
+    }
+
+    /**
+     * Global Search API for Admin Top Nav
+     */
+    public function globalSearch(Request $request)
+    {
+        $q = trim($request->query('q', ''));
+        if (strlen($q) < 2) {
+            return response()->json(['users' => [], 'products' => [], 'orders' => []]);
+        }
+
+        $users = User::where('full_name', 'LIKE', "%{$q}%")
+            ->orWhere('email', 'LIKE', "%{$q}%")
+            ->orWhere('shop_name', 'LIKE', "%{$q}%")
+            ->limit(5)->get(['id', 'full_name', 'email', 'role']);
+
+        $products = Product::where('title', 'LIKE', "%{$q}%")
+            ->orWhere('category', 'LIKE', "%{$q}%")
+            ->limit(5)->get(['id', 'title', 'price', 'image_url']);
+
+        $orders = Order::where('id', 'LIKE', "%{$q}%")
+            ->orWhere('customer_name', 'LIKE', "%{$q}%")
+            ->orWhere('customer_phone', 'LIKE', "%{$q}%")
+            ->limit(5)->get(['id', 'customer_name', 'total_amount', 'delivery_status']);
+
+        return response()->json([
+            'users' => $users,
+            'products' => $products,
+            'orders' => $orders
+        ]);
+    }
+
+    /**
+     * Mark all notifications as read for Admin
+     */
+    public function markNotificationsRead(Request $request)
+    {
+        Notification::where('user_id', auth()->id())
+            ->where('is_read', 0)
+            ->update(['is_read' => 1]);
+            
+        return response()->json(['success' => true]);
     }
 }

@@ -202,7 +202,7 @@
                                 <!-- Image -->
                                 <div class="col-auto">
                                     <div class="product-img-container">
-                                        <img src="{{ $product->image_url ? asset($product->image_url) : 'https://placehold.co/200' }}" alt="{{ $product->title }}" class="w-100 h-100 object-fit-contain">
+                                        <img src="{{ kura_product_image_url($product->image_url, 'https://placehold.co/200') }}" alt="{{ $product->title }}" class="w-100 h-100 object-fit-contain">
                                     </div>
                                 </div>
                                 

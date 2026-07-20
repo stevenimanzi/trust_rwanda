@@ -80,7 +80,7 @@
 @endpush
 
 @section('content')
-<div class="container-fluid p-0" style="max-width: 900px;">
+<div style="max-width: 900px; margin: 0 auto;">
     <!-- Back to listings header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
