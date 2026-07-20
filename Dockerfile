@@ -26,19 +26,21 @@ COPY . .
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install Laravel dependencies
-RUN composer install --optimize-autoloader
+RUN composer install --optimize-autoloader --no-dev
 
 # Set up environment file
 RUN cp .env.example .env
 RUN php artisan key:generate
 RUN sed -i 's/APP_ENV=local/APP_ENV=production/g' .env
-RUN sed -i 's/APP_DEBUG=false/APP_DEBUG=true/g' .env
+RUN sed -i 's/APP_DEBUG=true/APP_DEBUG=false/g' .env
+RUN sed -i 's|APP_URL=http://localhost|APP_URL=https://trustrwanda.onrender.com|g' .env
 RUN sed -i 's/SESSION_DRIVER=database/SESSION_DRIVER=file/g' .env
 RUN sed -i 's/CACHE_STORE=database/CACHE_STORE=file/g' .env
 RUN sed -i 's/QUEUE_CONNECTION=database/QUEUE_CONNECTION=sync/g' .env
 
-# Change DocumentRoot to Laravel's public directory
+# Configure Apache: set DocumentRoot AND enable AllowOverride for .htaccess
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+RUN echo '<Directory /var/www/html/public>\n    AllowOverride All\n    Require all granted\n</Directory>' >> /etc/apache2/sites-available/000-default.conf
 
 # Make Apache listen on the port provided by Render
 RUN echo "Listen \${PORT}" > /etc/apache2/ports.conf
