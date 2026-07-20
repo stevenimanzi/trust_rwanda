@@ -18,11 +18,11 @@ class LocaleMiddleware
     {
         $supported = ['rw', 'en', 'sw'];
         
-        // Check query parameter ?lang=, then session('lang'), fallback to 'rw'
-        $lang = $request->query('lang') ?? session('lang') ?? 'rw';
+        // Check query parameter ?lang=, then session('lang'), fallback to 'en'
+        $lang = $request->query('lang') ?? session('lang') ?? 'en';
         
         if (!in_array($lang, $supported, true)) {
-            $lang = 'rw';
+            $lang = 'en';
         }
         
         session(['lang' => $lang]);
