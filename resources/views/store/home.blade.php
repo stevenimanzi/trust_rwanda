@@ -1095,6 +1095,7 @@
         'rw' => [
             'farmers'     => 'Abahinzi & Umusaruro',
             'real_estate' => 'Imitungo Itimukanwa',
+            'fashion'     => 'Imyambaro & Imideli',
             'electronics' => 'Elegitoroniki',
             'second_hand' => 'Ibyakoreshejwe',
             'affiliate'   => 'Invite & Earn',
@@ -1103,6 +1104,7 @@
         'en' => [
             'farmers'     => 'Farmers & Harvest',
             'real_estate' => 'Real Estate',
+            'fashion'     => 'Fashion & Clothing',
             'electronics' => 'Electronics Shop',
             'second_hand' => 'Second Hand',
             'affiliate'   => 'Invite & Earn',
@@ -1111,6 +1113,7 @@
         'sw' => [
             'farmers'     => 'Wakulima na Mavuno',
             'real_estate' => 'Mali Isiyohamishika',
+            'fashion'     => 'Mitindo na Mavazi',
             'electronics' => 'Elektroniki',
             'second_hand' => 'Bidhaa Zilizotumika',
             'affiliate'   => 'Washirika (Earn)',
@@ -1161,6 +1164,17 @@
                     <span class="small fw-semibold" style="color: #4f46e5;">Top Tech Deals &rarr;</span>
                 </div>
                 <div class="cat-bg-icon"><i class="bi bi-cpu" style="color: #4f46e5;"></i></div>
+            </a>
+        </div>
+        <!-- Fashion -->
+        <div class="col-md-4 col-sm-6">
+            <a href="{{url('/')}}/products?category=fashion" class="premium-cat-card" style="background: linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%);">
+                <div class="cat-content">
+                    <div class="cat-icon-premium" style="color: #e11d48;"><i class="bi bi-handbag"></i></div>
+                    <h5 class="fw-bold text-dark mb-1">{{$homeCatData['fashion']}}</h5>
+                    <span class="small fw-semibold" style="color: #e11d48;">Latest Trends &rarr;</span>
+                </div>
+                <div class="cat-bg-icon"><i class="bi bi-tags" style="color: #e11d48;"></i></div>
             </a>
         </div>
         <!-- Second Hand -->

@@ -39,6 +39,17 @@
                     route('real_estate', ['category' => 'sale-land']) => 'Ibibanza Bigurishwa (Lands)',
                 ]
             ],
+            'fashion' => [
+                'title' => 'Imyambaro & Imideli',
+                'icon' => 'bi-handbag',
+                'link' => route('products.index', ['category' => 'fashion']),
+                'subs' => [
+                    route('products.index', ['category' => 'fashion']) => 'Imyambaro Yose',
+                    route('products.index', ['category' => 'clothes']) => 'Imyenda (Clothes)',
+                    route('products.index', ['category' => 'shoes']) => 'Inkweto (Shoes)',
+                    route('products.index', ['category' => 'accessories-fashion']) => 'Amashakoshi & Imitako',
+                ]
+            ],
             'electronics' => [
                 'title' => 'Elegitoroniki',
                 'icon' => 'bi-laptop',
@@ -116,6 +127,17 @@
                     route('real_estate', ['category' => 'rent-ghetto']) => 'Ghettos for Rent',
                     route('real_estate', ['category' => 'sale-house']) => 'Houses for Sale',
                     route('real_estate', ['category' => 'sale-land']) => 'Lands & Plots for Sale',
+                ]
+            ],
+            'fashion' => [
+                'title' => 'Fashion & Clothing',
+                'icon' => 'bi-handbag',
+                'link' => route('products.index', ['category' => 'fashion']),
+                'subs' => [
+                    route('products.index', ['category' => 'fashion']) => 'All Fashion',
+                    route('products.index', ['category' => 'clothes']) => 'Clothes & Apparel',
+                    route('products.index', ['category' => 'shoes']) => 'Shoes & Footwear',
+                    route('products.index', ['category' => 'accessories-fashion']) => 'Bags, Jewelry & Accessories',
                 ]
             ],
             'electronics' => [

@@ -48,35 +48,41 @@
                     <hr class="mb-5 border-light">
 
                     <h3 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                        <i class="bi bi-credit-card-fill text-primary"></i> Payment Method
+                        <i class="bi bi-credit-card-fill text-primary"></i> Secure Payment
                     </h3>
 
                     @php
                         $vendorCount = count($vendorGroups);
                     @endphp
 
-                    <div class="wa-alert-box p-4 mb-4 position-relative overflow-hidden" style="border-radius: 16px; background: #f0fdf4; border: 2px solid #bbf7d0;">
+                    <div class="payment-alert-box p-4 mb-4 position-relative overflow-hidden" style="border-radius: 16px; background: #f8fafc; border: 2px solid #e2e8f0;">
                         <!-- Background Icon -->
-                        <i class="bi bi-whatsapp position-absolute text-success" style="font-size: 8rem; right: -20px; top: -20px; opacity: 0.1;"></i>
+                        <i class="bi bi-shield-lock-fill position-absolute text-primary" style="font-size: 8rem; right: -20px; top: -20px; opacity: 0.05;"></i>
                         
                         <div class="d-flex align-items-start gap-3 position-relative z-index-1">
-                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; flex-shrink: 0;">
-                                <i class="bi bi-whatsapp fs-4"></i>
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; flex-shrink: 0;">
+                                <i class="bi bi-credit-card-2-front-fill fs-4"></i>
                             </div>
                             <div>
-                                <h5 class="fw-extrabold text-success mb-2">WhatsApp Order Processing</h5>
+                                <h5 class="fw-extrabold text-primary mb-2">Online Payment</h5>
                                 @if($vendorCount > 1)
                                     <p class="text-dark fw-bold mb-1">You have items from {{ $vendorCount }} different vendors!</p>
-                                    <p class="text-muted small m-0">To ensure the fastest delivery, your order will be split. After clicking "Place Order", we will generate {{ $vendorCount }} separate WhatsApp buttons so you can notify each vendor directly and arrange payment.</p>
+                                    <p class="text-muted small m-0">You will be securely redirected to Pesapal to complete a single payment for all items. We will handle splitting the payment to the respective vendors automatically.</p>
                                 @else
-                                    <p class="text-muted small m-0">After placing your order, we will generate a direct WhatsApp link so you can easily send your invoice to the vendor and arrange payment and delivery.</p>
+                                    <p class="text-muted small m-0">You will be securely redirected to Pesapal to complete your payment via Mobile Money (MTN Momo/Airtel) or Card.</p>
                                 @endif
+                                
+                                <div class="d-flex align-items-center gap-2 mt-3 opacity-75">
+                                    <span class="badge" style="background-color: #ffcc00; color: #000; font-size: 0.75rem;">MTN MoMo</span>
+                                    <span class="badge" style="background-color: #ff0000; color: #fff; font-size: 0.75rem;">Airtel Money</span>
+                                    <span class="badge bg-secondary" style="font-size: 0.75rem;"><i class="bi bi-credit-card-fill me-1"></i> Card</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 rounded-pill fw-extrabold shadow" style="font-size: 1.1rem; transition: transform 0.2s;">
-                        Place Order <i class="bi bi-arrow-right ms-2"></i>
+                        Pay Now <i class="bi bi-shield-check ms-2"></i>
                     </button>
                 </form>
             </div>
@@ -238,7 +244,11 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
         const result = await response.json();
 
         if (result.status === 'success') {
-            window.location.href = "{{ route('order.success') }}";
+            if (result.redirect_url) {
+                window.location.href = result.redirect_url;
+            } else {
+                window.location.href = "{{ route('order.success') }}";
+            }
         } else {
             Swal.fire({
                 icon: 'error',

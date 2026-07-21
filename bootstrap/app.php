@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust Render's reverse proxy so URLs generate with correct https:// scheme
         $middleware->trustProxies(at: '*');
 
+        $middleware->validateCsrfTokens(except: [
+            '/api/pesapal/ipn',
+            '/payment/callback',
+        ]);
         $middleware->web(append: [
             \App\Http\Middleware\LocaleMiddleware::class,
             \App\Http\Middleware\SecurityHeadersMiddleware::class,

@@ -77,6 +77,10 @@ Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout.ind
 Route::post('/checkout', [CartController::class, 'placeOrder'])->name('checkout.place');
 Route::get('/order-success', [CartController::class, 'success'])->name('order.success');
 
+// Payment Routes
+Route::get('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])->name('payment.callback');
+Route::match(['get', 'post'], '/api/pesapal/ipn', [\App\Http\Controllers\PaymentController::class, 'ipn'])->name('api.pesapal.ipn');
+
 // Affiliate Routes
 Route::get('/affiliate', [AffiliateController::class, 'index'])->name('affiliate.index');
 

@@ -43,6 +43,39 @@ class CartController extends Controller
         return view('store.cart', compact('products', 'cart', 'total'));
     }
 
+    /**
+     * API: Return product details for given IDs (used by localStorage cart)
+     */
+    public function apiProducts(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (is_string($ids)) {
+            $ids = explode(',', $ids);
+        }
+        $ids = array_map('intval', array_filter($ids));
+
+        if (empty($ids)) {
+            return response()->json(['products' => []]);
+        }
+
+        $products = Product::whereIn('id', $ids)->where('is_visible', 1)->get();
+
+        $result = $products->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'title' => $p->title,
+                'price' => $p->price,
+                'stock_quantity' => $p->stock_quantity,
+                'image_url' => $p->image_url,
+                'image_full' => kura_product_image_url($p->image_url),
+                'is_fresh_produce' => $p->is_fresh_produce ?? false,
+                'vendor_name' => $p->vendor ? $p->vendor->shop_name : 'Trust Rwanda',
+            ];
+        });
+
+        return response()->json(['products' => $result]);
+    }
+
     public function add(Request $request)
     {
         $pid = (int) $request->input('product_id', 0);
@@ -319,37 +352,51 @@ class CartController extends Controller
                         }
                     }
 
-                    $waItemsList .= "✅ {$item['qty']}x {$item['title']} (" . number_format($item['price']) . " RWF)\n";
-
                     // Decrement product stock quantity
                     $product = Product::find($item['id']);
                     if ($product) {
                         $product->decrement('stock_quantity', $item['qty']);
                     }
                 }
+            }
 
-                $vCleanPhone = preg_replace('/[^0-9]/', '', $group['phone']);
-                if (strpos($vCleanPhone, '0') === 0) {
-                    $vCleanPhone = '250' . substr($vCleanPhone, 1);
-                }
+            // --- PESAPAL INTEGRATION ---
+            $pesapalService = new \App\Services\PesapalService();
+            $token = $pesapalService->authenticate();
 
-                // WhatsApp message payload
-                $waMsg  = "⭐ *NEW ORDER RECEIVED* ⭐\n";
-                $waMsg .= "------------------------------------------\n";
-                $waMsg .= "🆔 *Order ID:* #{$order->id}\n";
-                $waMsg .= "👤 *Customer:* {$user->full_name}\n";
-                $waMsg .= "------------------------------------------\n";
-                $waMsg .= "🛍️ *ITEMS:*\n{$waItemsList}";
-                $waMsg .= "💰 *TOTAL:* " . number_format($group['subtotal']) . " RWF\n";
-                $waMsg .= "📍 *DELIVERY:* {$address}\n";
-                $waMsg .= "------------------------------------------\n";
-                $waMsg .= "🚀 _Process this now via KURA PRO Panel._";
+            $ipnId = \Illuminate\Support\Facades\Cache::remember('pesapal_ipn_id', 3600*24*30, function() use ($pesapalService, $token) {
+                return $pesapalService->registerIPN($token, route('api.pesapal.ipn'));
+            });
 
-                $whatsappLinks[] = [
-                    'shop_name' => $group['shop'],
-                    'url' => "https://wa.me/{$vCleanPhone}?text=" . urlencode($waMsg),
-                    'subtotal' => $group['subtotal']
-                ];
+            $testAmount = $totalAmount > 50000 ? 100.00 : round($totalAmount, 2);
+
+            $orderData = [
+                "id" => $transactionId,
+                "currency" => "RWF",
+                "amount" => $testAmount,
+                "description" => "Trust Rwanda Order " . $transactionId,
+                "callback_url" => route('payment.callback'),
+                "notification_id" => $ipnId,
+                "billing_address" => [
+                    "email_address" => $user->email ?? 'buyer@trustrwanda.com',
+                    "phone_number" => $phone,
+                    "country_code" => "RW",
+                    "first_name" => $user->name ?? 'Buyer',
+                    "middle_name" => "",
+                    "last_name" => "",
+                    "line_1" => $address,
+                    "line_2" => "",
+                    "city" => "Kigali",
+                    "state" => "Kigali",
+                    "postal_code" => "",
+                    "zip_code" => ""
+                ]
+            ];
+
+            $pesapalResponse = $pesapalService->submitOrder($token, $orderData);
+
+            if (!isset($pesapalResponse['redirect_url'])) {
+                throw new \Exception('Failed to get redirect URL from Pesapal');
             }
 
             DB::commit();
@@ -357,16 +404,15 @@ class CartController extends Controller
             session()->forget('cart');
             session()->forget('ref_user_id');
 
-            session(['latest_order_secure' => [
-                'id' => $transactionId, // Using transaction ID as the order reference
-                'address' => $address,
-                'links' => $whatsappLinks
-            ]]);
-
-            return response()->json(['status' => 'success']);
+            return response()->json([
+                'status' => 'success',
+                'redirect_url' => $pesapalResponse['redirect_url'],
+                'message' => 'Order created. Redirecting to payment gateway...'
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Pesapal Checkout Error: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }

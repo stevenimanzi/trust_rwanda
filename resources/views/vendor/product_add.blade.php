@@ -102,6 +102,7 @@
                         <select id="mainCategory" class="form-select hz-form-control py-2 fw-bold text-dark" required onchange="handleMainCategoryChange()">
                             <option value="">Select Main Category...</option>
                             <option value="electronics">Electronics & Tech</option>
+                            <option value="fashion">Fashion & Clothing</option>
                             <option value="farmers-market">Farmers Market (Agri)</option>
                             <option value="second-hand">Second-hand Goods</option>
                         </select>
@@ -193,6 +194,11 @@
             {slug: 'speakers-audio', name: 'Speakers & Audio'},
             {slug: 'gaming', name: 'Gaming & Consoles'},
             {slug: 'smart-home', name: 'Smart Home Devices'}
+        ],
+        'fashion': [
+            {slug: 'clothes', name: 'Clothes & Apparel'},
+            {slug: 'shoes', name: 'Shoes & Footwear'},
+            {slug: 'accessories-fashion', name: 'Bags, Jewelry & Accessories'}
         ],
         'second-hand': [
             {slug: 'second-hand', name: 'All Used Goods'},
