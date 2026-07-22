@@ -19,6 +19,7 @@ class Order extends Model
         'delivery_address',
         'delivery_phone',
         'transaction_id',
+        'payment_reference',
     ];
 
     public function customer()

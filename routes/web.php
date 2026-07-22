@@ -80,6 +80,9 @@ Route::get('/order-success', [CartController::class, 'success'])->name('order.su
 // Payment Routes
 Route::get('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])->name('payment.callback');
 Route::match(['get', 'post'], '/api/pesapal/ipn', [\App\Http\Controllers\PaymentController::class, 'ipn'])->name('api.pesapal.ipn');
+Route::get('/payment/mtn-momo/{reference}', [\App\Http\Controllers\MtnMomoPaymentController::class, 'pending'])->name('mtn-momo.pending');
+Route::get('/payment/mtn-momo/{reference}/status', [\App\Http\Controllers\MtnMomoPaymentController::class, 'status'])->name('mtn-momo.status');
+Route::match(['post', 'put'], '/api/mtn-momo/callback/{reference}', [\App\Http\Controllers\MtnMomoPaymentController::class, 'callback'])->name('mtn-momo.callback');
 
 // Affiliate Routes
 Route::get('/affiliate', [AffiliateController::class, 'index'])->name('affiliate.index');

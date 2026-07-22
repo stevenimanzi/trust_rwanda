@@ -22,6 +22,5 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
-        \Illuminate\Support\Facades\URL::forceRootUrl(env('APP_URL'));
     }
 }

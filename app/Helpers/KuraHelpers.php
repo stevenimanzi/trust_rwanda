@@ -15,9 +15,32 @@ if (!function_exists('kura_rating_icon_html')) {
 
 if (!function_exists('kura_product_image_url')) {
     function kura_product_image_url($path, $fallback = '') {
-        if (!$path) return asset('assets/images/placeholder.png');
+        $localFallback = asset('assets/images/TrustRwanda-Logo.png');
+        if (!$path) return $localFallback;
+
+        $path = str_replace('\\', '/', trim($path));
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) return $path;
-        return asset('assets/uploads/products/' . ltrim($path, '/'));
+
+        $path = preg_replace('#^/?public/#', '', ltrim($path, '/'));
+        $candidates = [];
+
+        if (str_starts_with($path, 'assets/') || str_starts_with($path, 'storage/')) {
+            $candidates[] = $path;
+        } elseif (str_starts_with($path, 'products/')) {
+            $candidates[] = 'storage/'.$path;
+            $candidates[] = 'assets/uploads/'.$path;
+        } else {
+            $candidates[] = 'assets/uploads/products/'.basename($path);
+            $candidates[] = 'storage/products/'.basename($path);
+        }
+
+        foreach ($candidates as $candidate) {
+            if (is_file(public_path($candidate))) {
+                return asset($candidate);
+            }
+        }
+
+        return $localFallback;
     }
 }
 
@@ -35,7 +58,15 @@ if (!function_exists('kura_csrf_token')) {
 
 if (!function_exists('kura_logo_image_url')) {
     function kura_logo_image_url($path, $fallback = '') {
-        return asset($path ? 'assets/images/' . $path : 'assets/images/KURA-Logo.jpg');
+        if (!$path) return asset('assets/images/TrustRwanda-Logo.png');
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) return $path;
+
+        $path = preg_replace('#^/?public/#', '', ltrim(str_replace('\\', '/', $path), '/'));
+        foreach ([$path, 'assets/uploads/logos/'.basename($path), 'assets/images/'.basename($path)] as $candidate) {
+            if (is_file(public_path($candidate))) return asset($candidate);
+        }
+
+        return asset('assets/images/TrustRwanda-Logo.png');
     }
 }
 

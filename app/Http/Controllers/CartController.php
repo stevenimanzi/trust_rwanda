@@ -252,6 +252,14 @@ class CartController extends Controller
         $user = auth()->user();
         $cart = session('cart', []);
 
+        $request->validate([
+            'payment_method' => ['required', 'in:mtn_momo,pesapal'],
+            'contact_phone' => ['required', 'string', 'max:30'],
+            'address' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $paymentMethod = $request->input('payment_method');
+
         if (empty($cart)) {
             return response()->json(['status' => 'error', 'message' => 'Cart is empty.']);
         }
@@ -308,7 +316,7 @@ class CartController extends Controller
                 $order = Order::create([
                     'user_id' => $user->id,
                     'total_amount' => $group['subtotal'],
-                    'payment_method' => 'whatsapp',
+                    'payment_method' => $paymentMethod,
                     'payment_status' => 'pending',
                     'delivery_status' => 'pending',
                     'delivery_address' => $address,
@@ -360,6 +368,24 @@ class CartController extends Controller
                 }
             }
 
+            if ($paymentMethod === 'mtn_momo') {
+                $momoService = new \App\Services\MtnMomoService();
+                $paymentReference = $momoService->requestToPay($transactionId, $phone, (float) $totalAmount);
+
+                Order::where('transaction_id', $transactionId)->update([
+                    'payment_reference' => $paymentReference,
+                ]);
+
+                DB::commit();
+                session()->forget(['cart', 'ref_user_id']);
+
+                return response()->json([
+                    'status' => 'success',
+                    'redirect_url' => route('mtn-momo.pending', ['reference' => $paymentReference]),
+                    'message' => 'Approve the MTN MoMo prompt on your phone.',
+                ]);
+            }
+
             // --- PESAPAL INTEGRATION ---
             $pesapalService = new \App\Services\PesapalService();
             $token = $pesapalService->authenticate();
@@ -368,6 +394,7 @@ class CartController extends Controller
                 return $pesapalService->registerIPN($token, route('api.pesapal.ipn'));
             });
 
+            // For testing, limit amount
             $testAmount = $totalAmount > 50000 ? 100.00 : round($totalAmount, 2);
 
             $orderData = [
@@ -412,7 +439,7 @@ class CartController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Pesapal Checkout Error: ' . $e->getMessage());
+            \Log::error('Checkout Payment Error: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }

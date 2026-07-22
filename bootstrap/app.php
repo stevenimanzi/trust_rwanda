@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             '/api/pesapal/ipn',
             '/payment/callback',
+            '/api/mtn-momo/callback/*',
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\LocaleMiddleware::class,

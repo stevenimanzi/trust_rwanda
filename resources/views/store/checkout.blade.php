@@ -55,30 +55,23 @@
                         $vendorCount = count($vendorGroups);
                     @endphp
 
-                    <div class="payment-alert-box p-4 mb-4 position-relative overflow-hidden" style="border-radius: 16px; background: #f8fafc; border: 2px solid #e2e8f0;">
-                        <!-- Background Icon -->
-                        <i class="bi bi-shield-lock-fill position-absolute text-primary" style="font-size: 8rem; right: -20px; top: -20px; opacity: 0.05;"></i>
-                        
-                        <div class="d-flex align-items-start gap-3 position-relative z-index-1">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; flex-shrink: 0;">
-                                <i class="bi bi-credit-card-2-front-fill fs-4"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-extrabold text-primary mb-2">Online Payment</h5>
-                                @if($vendorCount > 1)
-                                    <p class="text-dark fw-bold mb-1">You have items from {{ $vendorCount }} different vendors!</p>
-                                    <p class="text-muted small m-0">You will be securely redirected to Pesapal to complete a single payment for all items. We will handle splitting the payment to the respective vendors automatically.</p>
-                                @else
-                                    <p class="text-muted small m-0">You will be securely redirected to Pesapal to complete your payment via Mobile Money (MTN Momo/Airtel) or Card.</p>
-                                @endif
-                                
-                                <div class="d-flex align-items-center gap-2 mt-3 opacity-75">
-                                    <span class="badge" style="background-color: #ffcc00; color: #000; font-size: 0.75rem;">MTN MoMo</span>
-                                    <span class="badge" style="background-color: #ff0000; color: #fff; font-size: 0.75rem;">Airtel Money</span>
-                                    <span class="badge bg-secondary" style="font-size: 0.75rem;"><i class="bi bi-credit-card-fill me-1"></i> Card</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="d-grid gap-3 mb-4">
+                        <label class="payment-option d-flex align-items-center gap-3 p-3 border bg-white" style="border-radius: 8px; cursor: pointer;">
+                            <input class="form-check-input m-0" type="radio" name="payment_method" value="mtn_momo" checked>
+                            <span class="d-flex align-items-center justify-content-center fw-bold" style="width: 48px; height: 40px; border-radius: 6px; background: #ffcc00; color: #111;">MTN</span>
+                            <span>
+                                <strong class="d-block">MTN Mobile Money</strong>
+                                <small class="text-muted">Approve the payment prompt on your phone</small>
+                            </span>
+                        </label>
+                        <label class="payment-option d-flex align-items-center gap-3 p-3 border bg-white" style="border-radius: 8px; cursor: pointer;">
+                            <input class="form-check-input m-0" type="radio" name="payment_method" value="pesapal">
+                            <span class="d-flex align-items-center justify-content-center bg-primary text-white" style="width: 48px; height: 40px; border-radius: 6px;"><i class="bi bi-credit-card"></i></span>
+                            <span>
+                                <strong class="d-block">Card or other mobile money</strong>
+                                <small class="text-muted">Continue securely through Pesapal</small>
+                            </span>
+                        </label>
                     </div>
 
                     <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 rounded-pill fw-extrabold shadow" style="font-size: 1.1rem; transition: transform 0.2s;">

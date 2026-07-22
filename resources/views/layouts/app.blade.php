@@ -10,13 +10,6 @@ if (!function_exists('kura_rating_icon_html')) {
             . str_repeat('<i class="bi bi-star text-warning"></i>', $emptyStars);
     }
 }
-if (!function_exists('kura_product_image_url')) {
-    function kura_product_image_url($path, $fallback = '') {
-        if (!$path) return asset('assets/images/placeholder.png');
-        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) return $path;
-        return asset('assets/uploads/products/' . ltrim($path, '/'));
-    }
-}
 if (!function_exists('kura_csrf_input')) {
     function kura_csrf_input($scope='default') {
         return csrf_field();
