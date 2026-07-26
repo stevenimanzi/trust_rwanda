@@ -37,16 +37,14 @@ class PaymentController extends Controller
             $token = $this->pesapalService->authenticate();
 
             \Log::info('PaymentController: Registering IPN');
-            $ipnId = \Illuminate\Support\Facades\Cache::remember('pesapal_ipn_id', 3600*24*30, function() use ($token) {
-                // Determine callback URL (Must be public, but for local testing we will let it fail gracefully)
+            $ipnId = \Illuminate\Support\Facades\Cache::remember('pesapal_ipn_id_' . (app()->isLocal() ? 'local' : 'prod'), 3600*24*30, function() use ($token) {
+                // Determine IPN URL (Must be a public domain. If local, fake it so Pesapal API accepts it)
+                $ipnUrl = app()->isLocal() ? 'https://trustrwanda.com/api/pesapal/ipn' : route('api.pesapal.ipn');
+                
                 try {
-                    return $this->pesapalService->registerIPN($token, route('api.pesapal.ipn'));
+                    return $this->pesapalService->registerIPN($token, $ipnUrl);
                 } catch (\Exception $e) {
-                    \Log::warning('IPN Registration failed, likely because of local testing environment. ' . $e->getMessage());
-                    // In production this should stop execution, but we allow bypass if local
-                    if (app()->isLocal()) {
-                        return 'dummy_ipn_id_for_local_testing';
-                    }
+                    \Log::error('IPN Registration failed: ' . $e->getMessage());
                     throw $e;
                 }
             });
@@ -55,12 +53,15 @@ class PaymentController extends Controller
             $testAmount = round($totalAmount, 2);
 
             // Construct billing address, replacing empty names with "Buyer" to prevent Pesapal validation errors
+            // Ensure callback URL is a valid domain to prevent Pesapal from blocking the iframe load
+            $callbackUrl = app()->isLocal() ? 'https://trustrwanda.com/payment/callback' : route('payment.callback');
+
             $orderData = [
                 "id" => $orderId,
                 "currency" => "RWF",
                 "amount" => $testAmount,
                 "description" => "Trust Rwanda Order " . $orderId,
-                "callback_url" => route('payment.callback'),
+                "callback_url" => $callbackUrl,
                 "notification_id" => $ipnId,
                 "billing_address" => [
                     "email_address" => $user->email ?? 'buyer@trustrwanda.com',
