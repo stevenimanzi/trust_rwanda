@@ -17,52 +17,96 @@
 </div>
 
 <div class="container mb-5">
-    <!-- Electronics or Second-hand Subcategories Pills -->
-    @if ($isElectronicsPage && !empty($electronicsSubCats))
-        <div class="d-flex gap-2 overflow-auto pb-4" style="scrollbar-width: none;">
-            <a href="{{ route('products.index', ['category' => 'electronics', 'sub' => 'all']) }}" class="elec-cat-pill text-decoration-none {{ $selectedSubCat === 'all' ? 'active' : '' }}">
-                All Electronics
-            </a>
-            @foreach ($electronicsSubCats as $sub)
-                <a href="{{ route('products.index', ['category' => 'electronics', 'sub' => $sub['slug']]) }}" class="elec-cat-pill text-decoration-none {{ $selectedSubCat === $sub['slug'] ? 'active' : '' }}">
-                    {{ $sub['name'] }}
-                </a>
-            @endforeach
-        </div>
-    @elseif ($isSecondHandPage && !empty($secondHandSubCats))
-        <div class="d-flex gap-2 overflow-auto pb-4" style="scrollbar-width: none;">
-            <a href="{{ route('products.index', ['category' => 'second-hand', 'sub' => 'all']) }}" class="elec-cat-pill text-decoration-none {{ $selectedSubCat === 'all' ? 'active' : '' }}">
-                All Used Goods
-            </a>
-            @foreach ($secondHandSubCats as $sub)
-                <a href="{{ route('products.index', ['category' => 'second-hand', 'sub' => $sub['slug']]) }}" class="elec-cat-pill text-decoration-none {{ $selectedSubCat === $sub['slug'] ? 'active' : '' }}">
-                    {{ $sub['name'] }}
-                </a>
-            @endforeach
-        </div>
-    @endif
+
 
     <div class="row g-4">
         <!-- Sidebar Filters -->
         <div class="col-lg-3 d-none d-lg-block">
             <div class="card border shadow-sm p-3 sticky-top" style="top: 130px; border-radius: 16px;">
-                <h5 class="fw-bold mb-3"><i class="bi bi-funnel"></i> Categories</h5>
+                @php
+                    $fashionCats = ['fashion', 'clothes', 'shoes', 'accessories-fashion'];
+                    $elecCats = ['electronics', 'mobile-phones', 'laptops-computers', 'tablets', 'smartwatches', 'accessories', 'tv-systems', 'speakers-audio', 'gaming', 'smart-home'];
+                    $secondHandCats = ['second-hand', 'used-vehicles', 'used-mobile-phones', 'used-laptops', 'used-televisions', 'used-furniture', 'used-electronics'];
+                    
+                    $isFashionCategory = in_array($category, $fashionCats);
+                    $isElecCategory = in_array($category, $elecCats);
+                    $isSecondHandCategory = in_array($category, $secondHandCats);
+                @endphp
+                <h5 class="fw-bold mb-3"><i class="bi bi-funnel"></i> 
+                    @if($isFashionCategory) Fashion Categories 
+                    @elseif($isElecCategory) Electronics Categories
+                    @elseif($isSecondHandCategory) Second Hand Categories
+                    @else Categories @endif
+                </h5>
                 <div class="list-group list-group-flush">
-                    <a href="{{ route('products.index', ['category' => 'all']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'all' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
-                        <span><i class="bi bi-grid me-2"></i> All Products</span>
-                    </a>
-                    <a href="{{ route('farmers.market') }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 text-secondary">
-                        <span><i class="bi bi-flower1 me-2 text-success"></i> Farmers Market</span>
-                    </a>
-                    <a href="{{ route('products.index', ['category' => 'electronics']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'electronics' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
-                        <span><i class="bi bi-laptop me-2"></i> Electronics</span>
-                    </a>
-                    <a href="{{ route('products.index', ['category' => 'second-hand']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'second-hand' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
-                        <span><i class="bi bi-recycle me-2"></i> Second Hand</span>
-                    </a>
-                    <a href="{{ route('real_estate') }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 text-secondary">
-                        <span><i class="bi bi-buildings me-2"></i> Real Estate</span>
-                    </a>
+                    @if($isFashionCategory)
+                        <a href="{{ route('products.index', ['category' => 'fashion']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'fashion' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-handbag me-2"></i> All Fashion</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'clothes']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'clothes' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-person me-2"></i> Clothes & Apparel</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'shoes']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'shoes' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-tag me-2"></i> Shoes & Footwear</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'accessories-fashion']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'accessories-fashion' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-watch me-2"></i> Bags & Accessories</span>
+                        </a>
+                    @elseif($isElecCategory)
+                        <a href="{{ route('products.index', ['category' => 'electronics']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'electronics' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-grid me-2"></i> All Electronics</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'mobile-phones']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'mobile-phones' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-phone me-2"></i> Smartphones & Tablets</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'laptops-computers']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'laptops-computers' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-laptop me-2"></i> Laptops & Computers</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'smart-home']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'smart-home' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-house-gear me-2"></i> Smart Home Devices</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'tv-systems']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'tv-systems' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-tv me-2"></i> TV & Home Systems</span>
+                        </a>
+                    @elseif($isSecondHandCategory)
+                        <a href="{{ route('products.index', ['category' => 'second-hand']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'second-hand' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-grid me-2"></i> All Used Goods</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'used-vehicles']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'used-vehicles' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-car-front me-2"></i> Used Vehicles & Motos</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'used-mobile-phones']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'used-mobile-phones' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-phone me-2"></i> Used Mobile Phones</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'used-laptops']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'used-laptops' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-laptop me-2"></i> Used Laptops & Computers</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'used-televisions']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'used-televisions' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-tv me-2"></i> Used Televisions</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'used-furniture']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'used-furniture' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-lamp me-2"></i> Pre-owned Furniture</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'used-electronics']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'used-electronics' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-plug me-2"></i> Used Electronics</span>
+                        </a>
+                    @else
+                        <a href="{{ route('products.index', ['category' => 'all']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'all' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-grid me-2"></i> All Products</span>
+                        </a>
+                        <a href="{{ route('farmers.market') }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 text-secondary">
+                            <span><i class="bi bi-flower1 me-2 text-success"></i> Farmers Market</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'electronics']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'electronics' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-laptop me-2"></i> Electronics</span>
+                        </a>
+                        <a href="{{ route('products.index', ['category' => 'second-hand']) }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 {{ $category === 'second-hand' ? 'bg-primary-subtle text-primary' : 'text-secondary' }}">
+                            <span><i class="bi bi-recycle me-2"></i> Second Hand</span>
+                        </a>
+                        <a href="{{ route('real_estate') }}" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between border-0 px-2 rounded-3 fw-bold mb-1 text-secondary">
+                            <span><i class="bi bi-buildings me-2"></i> Real Estate</span>
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -106,7 +150,12 @@
                                 </div>
                                 <span class="mc-cat text-muted mt-3">{{ $product->category }}</span>
                                 <a href="{{ route('products.show', $product->id) }}" class="mc-title text-decoration-none text-dark fw-bold mb-1">{{ $product->title }}</a>
-                                <div class="small text-secondary mb-2"><i class="bi bi-shop text-primary"></i> {{ $product->vendor ? $product->vendor->shop_name : 'Independent Seller' }}</div>
+                                <div class="small text-secondary mb-2">
+                                    <i class="bi bi-shop text-primary"></i> {{ $product->vendor ? $product->vendor->shop_name : 'Independent Seller' }}
+                                    @if($product->vendor && $product->vendor->is_verified)
+                                        <i class="bi bi-patch-check-fill text-primary ms-1" title="Verified Seller"></i>
+                                    @endif
+                                </div>
                                 
                                 <div class="mc-footer mt-auto d-flex justify-content-between align-items-center">
                                     <span class="mc-price fw-bold text-danger">{{ number_format($product->price) }} RWF</span>

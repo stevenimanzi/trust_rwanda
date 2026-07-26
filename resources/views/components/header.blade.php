@@ -257,23 +257,31 @@
     }
 
     if (!function_exists('isActiveLink')) {
-        function isActiveLink($link) {
+        function isActiveLink($cat) {
             $currentUrl = request()->fullUrl();
-            $linkPath = parse_url($link, PHP_URL_PATH);
             $currentPath = parse_url($currentUrl, PHP_URL_PATH);
+            parse_str(parse_url($currentUrl, PHP_URL_QUERY) ?? '', $currentParams);
             
-            if ($linkPath !== $currentPath) return '';
-            
-            $linkQuery = parse_url($link, PHP_URL_QUERY);
-            $currentQuery = parse_url($currentUrl, PHP_URL_QUERY);
-            
-            parse_str($linkQuery ?? '', $linkParams);
-            parse_str($currentQuery ?? '', $currentParams);
-            
-            if (isset($linkParams['category'])) {
-                return ($currentParams['category'] ?? '') === $linkParams['category'] ? 'active' : '';
+            $urlsToCheck = [$cat['link']];
+            if (isset($cat['subs'])) {
+                $urlsToCheck = array_merge($urlsToCheck, array_keys($cat['subs']));
             }
-            return !isset($currentParams['category']) ? 'active' : '';
+            
+            foreach ($urlsToCheck as $url) {
+                $uPath = parse_url($url, PHP_URL_PATH);
+                parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $uParams);
+                
+                if ($uPath === $currentPath) {
+                    $match = true;
+                    foreach ($uParams as $k => $v) {
+                        if (($currentParams[$k] ?? null) !== $v) {
+                            $match = false; break;
+                        }
+                    }
+                    if ($match) return 'active';
+                }
+            }
+            return '';
         }
     }
 @endphp
@@ -392,7 +400,7 @@
                 @foreach ($langData as $key => $cat)
                     @php
                         $pillClass = ($key === 'affiliate') ? 'affiliate-pill' : '';
-                        $isActive = isActiveLink($cat['link']);
+                        $isActive = isActiveLink($cat);
                     @endphp
                     <div class="market-dropdown">
                         <a href="#" class="market-pill-btn {{ $pillClass }} {{ $isActive }}">

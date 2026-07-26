@@ -20,9 +20,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>@yield('title', 'Admin Pro') | {{ $_adminSiteName }}</title>
     
-    @if($_sysLogo)
-    <link rel="icon" href="{{ kura_logo_image_url($_sysLogo) }}">
-    @endif
+    <link rel="icon" type="image/x-icon" href="{{ $_adminSiteLogo }}">
+    <link rel="apple-touch-icon" href="{{ $_adminSiteLogo }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -65,9 +64,6 @@
         <a href="{{ route('admin.products.index') }}" class="hz-nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
             <i class="bi bi-box-seam-fill"></i> Products
         </a>
-        <a href="#" class="hz-nav-link">
-            <i class="bi bi-cart-check"></i> Orders <span class="badge bg-secondary ms-2" style="font-size:0.6rem">Soon</span>
-        </a>
         <a href="{{ route('admin.promo_requests.index') }}" class="hz-nav-link {{ request()->routeIs('admin.promo_requests.*') ? 'active' : '' }}">
             <i class="bi bi-megaphone-fill"></i> Promo Requests
         </a>
@@ -97,7 +93,6 @@
         </form>
     </div>
 </nav>
-
 <!-- HORIZON TOPNAV -->
 <header class="hz-topnav">
     <div class="hz-page-title">
@@ -189,9 +184,11 @@
 </header>
 
 <!-- MAIN CONTENT -->
-<div class="container-fluid" style="padding: 32px;">
-    @yield('content')
-</div>
+<main class="hz-main">
+    <div class="container-fluid" style="padding: 0;">
+        @yield('content')
+    </div>
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

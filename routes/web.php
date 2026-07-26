@@ -221,6 +221,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
     Route::post('/products/toggle', [AdminProductController::class, 'toggleStatus'])->name('products.toggle');
+    Route::post('/products/flash-deal', [AdminProductController::class, 'toggleFlashDeal'])->name('products.flash_deal');
     Route::post('/products/delete', [AdminProductController::class, 'delete'])->name('products.delete');
 
     Route::get('/settings', [UserSettingsController::class, 'index'])->name('settings.index');

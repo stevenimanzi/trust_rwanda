@@ -524,6 +524,7 @@ $footerCategories = [];
             .market-subbar,
             .market-subbar-container {
                 overflow: visible !important;
+                justify-content: space-between;
             }
         }
         
@@ -553,6 +554,9 @@ $footerCategories = [];
             color: white;
             border-color: var(--primary);
             box-shadow: 0 4px 10px rgba(30, 58, 138, 0.15);
+        }
+        .market-pill-btn:hover i, .market-pill-btn.active i {
+            color: white !important;
         }
         .market-pill-btn.affiliate-pill {
             background: #fef3c7;

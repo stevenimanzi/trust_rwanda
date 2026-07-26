@@ -95,7 +95,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 <img src="{{ kura_product_image_url($p->image_url, 'https://placehold.co/100?text=TRUST') }}" style="width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 1px solid var(--hz-border);" onerror="this.src='https://placehold.co/100?text=TRUST'">
                                 <div>
-                                    <div class="fw-bold text-dark">{{ $p->title }}</div>
+                                    <div class="fw-bold text-dark">{{ $p->title }} @if($p->is_flash_deal) <span class="badge bg-danger rounded-pill ms-1" style="font-size:0.6rem;"><i class="bi bi-lightning-fill"></i> FLASH</span> @endif</div>
                                     <div class="small text-muted">{{ strtoupper($p->category) }}</div>
                                 </div>
                             </div>
@@ -130,6 +130,15 @@
                                         </form>
                                     </li>
                                     <li>
+                                        <form method="POST" action="{{ route('admin.products.flash_deal') }}">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $p->id }}"><input type="hidden" name="is_flash_deal" value="{{ $p->is_flash_deal ? '0' : '1' }}">
+                                            <button type="submit" class="dropdown-item py-2 fw-bold text-dark">
+                                                <i class="bi bi-lightning-charge-fill me-2 {{ $p->is_flash_deal ? 'text-danger' : 'text-muted' }}"></i> {{ $p->is_flash_deal ? 'Unpin Flash Deal' : 'Pin to Flash Deals' }}
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li>
                                         <form method="POST" action="{{ route('admin.products.delete') }}">
                                             @csrf
                                             <input type="hidden" name="product_id" value="{{ $p->id }}">
@@ -152,7 +161,7 @@
             <div class="d-flex gap-3 mb-3">
                 <img src="{{ kura_product_image_url($p->image_url, 'https://placehold.co/100?text=TRUST') }}" class="product-thumb" onerror="this.src='https://placehold.co/100?text=TRUST'">
                 <div class="flex-grow-1 overflow-hidden">
-                    <div class="fw-900 small text-truncate">{{ $p->title }}</div>
+                    <div class="fw-900 small text-truncate">{{ $p->title }} @if($p->is_flash_deal) <span class="badge bg-danger ms-1" style="font-size:0.55rem;"><i class="bi bi-lightning-fill"></i></span> @endif</div>
                     <div class="text-primary fw-bold" style="font-size:0.7rem;">{{ $p->shop_name }}</div>
                     <div class="fw-900 mt-1" style="font-size:0.85rem;">{{ number_format($p->price) }} RWF</div>
                 </div>
@@ -161,6 +170,11 @@
             <div class="d-flex justify-content-between align-items-center pt-3 border-top border-dark border-opacity-10">
                 <div class="small fw-bold {{ $p->stock_quantity < 5 ? 'text-danger' : 'text-muted' }}">STOCK: {{ $p->stock_quantity }}</div>
                 <div class="d-flex gap-2">
+                    <form method="POST" action="{{ route('admin.products.flash_deal') }}">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $p->id }}"><input type="hidden" name="is_flash_deal" value="{{ $p->is_flash_deal ? '0' : '1' }}">
+                        <button type="submit" class="btn-action border-0 {{ $p->is_flash_deal ? 'text-danger' : 'text-secondary' }}"><i class="bi bi-lightning-charge-fill"></i></button>
+                    </form>
                     <form method="POST" action="{{ route('admin.products.toggle') }}">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $p->id }}"><input type="hidden" name="new_status" value="{{ $p->is_visible ? '0' : '1' }}">

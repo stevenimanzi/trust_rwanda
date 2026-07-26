@@ -112,7 +112,10 @@
                     </td>
                     <td>
                         @if($u->role == 'vendor')
-                            <div class="small"><i class="bi bi-shop text-muted"></i> <strong>{{ $u->shop_name ?? 'N/A' }}</strong></div>
+                            <div class="small">
+                                <i class="bi bi-shop text-muted"></i> <strong>{{ $u->shop_name ?? 'N/A' }}</strong> 
+                                @if($u->is_verified) <i class="bi bi-patch-check-fill text-primary ms-1" title="Verified Shop" data-bs-toggle="tooltip"></i> @endif
+                            </div>
                         @else
                             <div class="small text-muted">-</div>
                         @endif
@@ -127,11 +130,20 @@
                                     <form method="POST" action="{{ route('admin.users.toggle') }}">
                                         @csrf
                                         <input type="hidden" name="user_id" value="{{ $u->id }}">
+                                        <input type="hidden" name="new_status" value="{{ $u->is_verified ? '0' : '1' }}">
                                         <button class="dropdown-item" type="submit">
                                             @if($u->is_verified)
-                                            <i class="bi bi-x-circle me-2 text-warning"></i> Suspend User
+                                                @if($u->role == 'vendor')
+                                                <i class="bi bi-x-circle me-2 text-warning"></i> Revoke Verification
+                                                @else
+                                                <i class="bi bi-x-circle me-2 text-warning"></i> Suspend User
+                                                @endif
                                             @else
-                                            <i class="bi bi-check-circle me-2 text-success"></i> Activate User
+                                                @if($u->role == 'vendor')
+                                                <i class="bi bi-patch-check-fill me-2 text-primary"></i> Verify Shop
+                                                @else
+                                                <i class="bi bi-check-circle me-2 text-success"></i> Activate User
+                                                @endif
                                             @endif
                                         </button>
                                     </form>

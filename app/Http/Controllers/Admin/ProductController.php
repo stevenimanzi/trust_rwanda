@@ -69,6 +69,23 @@ class ProductController extends Controller
     }
 
     /**
+     * Toggle flash deal status
+     */
+    public function toggleFlashDeal(Request $request)
+    {
+        $product = Product::findOrFail($request->input('product_id'));
+        $newFlashStatus = (int)$request->input('is_flash_deal');
+        
+        $product->update([
+            'is_flash_deal' => $newFlashStatus,
+            'discount_percent' => $newFlashStatus ? 20 : 0 // Default 20% discount when pinned
+        ]);
+
+        $msg = $newFlashStatus ? "PRODUCT PINNED TO FLASH DEALS" : "PRODUCT REMOVED FROM FLASH DEALS";
+        return redirect()->back()->with('success', $msg);
+    }
+
+    /**
      * Delete product SKU from catalog
      */
     public function delete(Request $request)

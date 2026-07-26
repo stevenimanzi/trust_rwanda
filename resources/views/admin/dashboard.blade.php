@@ -140,7 +140,7 @@
                                     <div class="text-muted fw-medium text-truncate" style="font-size: 0.75rem;">{{ $v->email }}</div>
                                 </div>
                             </div>
-                            <span class="hz-status-pill progress cursor-pointer" onclick="window.location.href='{{ route('admin.users.index') }}'">Verify</span>
+                            <span class="hz-badge hz-badge-primary cursor-pointer" onclick="window.location.href='{{ route('admin.users.index') }}'">Verify</span>
                         </div>
                     @endforeach
                 @endif
@@ -191,11 +191,11 @@
                     </td>
                     <td class="py-3 px-2">
                         @if($o->delivery_status == 'delivered')
-                            <span class="hz-status-pill completed">Completed</span>
+                            <span class="hz-badge hz-badge-success">Completed</span>
                         @elseif($o->delivery_status == 'cancelled' || $o->delivery_status == 'returned')
-                            <span class="hz-status-pill" style="background:#fee2e2; color:#ef4444;">Cancelled</span>
+                            <span class="hz-badge hz-badge-danger">Cancelled</span>
                         @else
-                            <span class="hz-status-pill progress">In progress</span>
+                            <span class="hz-badge hz-badge-primary">In progress</span>
                         @endif
                     </td>
                 </tr>

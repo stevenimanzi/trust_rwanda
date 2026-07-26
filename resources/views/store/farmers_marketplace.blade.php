@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Hero Section -->
-<div class="farm-hero">
+<div class="farm-hero mt-4 mx-3">
     <div class="container text-center text-white py-5">
         <span class="badge bg-white text-success fw-bold px-3 py-2 mb-3 text-uppercase" style="letter-spacing:1px;"><i class="bi bi-flower1"></i> Farmers Direct</span>
         <h1 class="fw-extrabold mb-3">Fresh Harvest Marketplace</h1>
@@ -98,7 +98,7 @@
 <style>
     .farm-hero {
         background: linear-gradient(135deg, rgba(4, 120, 87, 0.9) 0%, rgba(16, 185, 129, 0.85) 100%);
-        border-radius: 0 0 40px 40px;
+        border-radius: 40px;
     }
     .search-container {
         position: relative;

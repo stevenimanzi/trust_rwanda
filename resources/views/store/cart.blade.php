@@ -208,7 +208,7 @@
                                 
                                 <!-- Details -->
                                 <div class="col min-vw-0" style="min-width: 0;">
-                                    <div class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-1 small mb-2 text-uppercase fw-bold" style="letter-spacing: 0.5px; font-size: 0.7rem;">
+                                    <div class="badge border border-primary text-primary bg-white rounded-pill px-3 py-1 small mb-2 text-uppercase fw-bold" style="letter-spacing: 0.5px; font-size: 0.7rem;">
                                         {{ $product->category }}
                                     </div>
                                     <h5 class="fw-800 text-dark mb-1 text-truncate">{{ $product->title }}</h5>
@@ -237,7 +237,7 @@
                                     </div>
                                     
                                     <div class="ps-md-2 border-start-md border-0 flex-shrink-0">
-                                        <button type="button" onclick="removeFromCart({{ $product->id }})" class="remove-btn shadow-sm" title="Remove Item">
+                                        <button type="button" onclick="removeFromCart({{ $product->id }})" class="btn btn-light rounded-circle shadow-sm border text-danger d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; transition: 0.3s;" onmouseover="this.classList.replace('btn-light', 'btn-danger'); this.classList.replace('text-danger', 'text-white')" onmouseout="this.classList.replace('btn-danger', 'btn-light'); this.classList.replace('text-white', 'text-danger')" title="Remove Item">
                                             <i class="bi bi-trash3-fill fs-5"></i>
                                         </button>
                                     </div>
@@ -265,7 +265,7 @@
                     
                     <div class="d-flex justify-content-between mb-4 pb-4 border-bottom border-light-subtle fs-6">
                         <span class="text-muted fw-medium">Delivery Fee</span>
-                        <span class="text-success fw-bold bg-success bg-opacity-10 px-2 py-1 rounded">Calculated at Checkout</span>
+                        <span class="text-muted fw-bold bg-light border px-2 py-1 rounded" style="font-size:0.85rem;">Calculated at Checkout</span>
                     </div>
                     
                     <div class="d-flex justify-content-between align-items-end mb-4">

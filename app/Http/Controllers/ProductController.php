@@ -110,23 +110,12 @@ class ProductController extends Controller
             ->where('is_visible', 1);
 
         // Apply category filter
-        if ($isElectronicsPage) {
-            if ($selectedSubCat !== 'all') {
-                $query->where('category', $selectedSubCat);
-            } else {
-                $elecSlugs = array_column($electronicsSubCats, 'slug');
-                $elecSlugs[] = 'electronics';
-                $query->whereIn('category', $elecSlugs);
-            }
-        } elseif ($isSecondHandPage) {
-            if ($selectedSubCat !== 'all') {
-                $query->where('category', $selectedSubCat);
-            } else {
-                $shSlugs = array_column($secondHandSubCats, 'slug');
-                $shSlugs[] = 'second-hand';
-                $shSlugs[] = 'second_hand';
-                $query->whereIn('category', $shSlugs);
-            }
+        if ($category === 'electronics') {
+            $query->whereIn('category', ['electronics', 'mobile-phones', 'laptops-computers', 'tablets', 'smartwatches', 'accessories', 'tv-systems', 'speakers-audio', 'gaming', 'smart-home']);
+        } elseif ($category === 'second-hand') {
+            $query->whereIn('category', ['second-hand', 'second_hand', 'used-vehicles', 'used-mobile-phones', 'used-laptops', 'used-televisions', 'used-furniture', 'used-electronics']);
+        } elseif ($category === 'fashion') {
+            $query->whereIn('category', ['fashion', 'clothes', 'shoes', 'accessories-fashion']);
         } elseif ($category !== 'all') {
             $query->where('category', $category);
         }
