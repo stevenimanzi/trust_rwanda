@@ -1424,11 +1424,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (hasProducts) {
                             html += `<div class="px-3 py-2 bg-light border-bottom text-muted small fw-bold text-uppercase">Products</div>`;
                             data.products.forEach(product => {
-                                const img = product.image_url || 'https://placehold.co/100x100/eeeeee/999999?text=No+Image';
+                                let img = 'https://placehold.co/100x100/eeeeee/999999?text=No+Image';
+                                if (product.image_url) {
+                                    img = product.image_url.startsWith('http') ? product.image_url : '/' + product.image_url;
+                                }
                                 const price = Number(product.price).toLocaleString() + ' ' + (product.price_unit || 'RWF');
                                 html += `
                                     <a href="/products/${product.id}" class="dropdown-item d-flex align-items-center gap-3 py-2 border-bottom">
-                                        <img src="${img}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                        <img src="${img}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://placehold.co/100x100/eeeeee/999999?text=No+Image'">
                                         <div style="flex: 1; min-width: 0;">
                                             <div class="fw-bold text-truncate" style="font-size: 0.85rem;">${product.title}</div>
                                             <div class="text-primary fw-bold" style="font-size: 0.75rem;">${price}</div>

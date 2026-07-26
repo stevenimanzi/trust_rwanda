@@ -66,7 +66,7 @@
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="card h-100 border-0 shadow-sm overflow-hidden" style="border-radius: 16px; transition: transform 0.3s ease;">
                         <div class="position-relative">
-                            <img src="{{ $product->image_url ?? 'https://placehold.co/600x600/eeeeee/999999?text=No+Image' }}" class="card-img-top" alt="{{ $product->title }}" style="height: 200px; object-fit: cover;">
+                            <img src="{{ kura_product_image_url($product->image_url, 'https://placehold.co/600x600/eeeeee/999999?text=No+Image') }}" class="card-img-top" alt="{{ $product->title }}" style="height: 200px; object-fit: cover;" onerror="this.src='https://placehold.co/600x600/eeeeee/999999?text=No+Image'">
                             @if($product->category)
                                 <span class="badge bg-dark position-absolute top-0 end-0 m-3 rounded-pill px-3 py-2 shadow-sm text-uppercase fw-bold" style="font-size: 0.75rem;">
                                     {{ str_replace('-', ' ', $product->category) }}
