@@ -78,6 +78,8 @@ Route::post('/checkout', [CartController::class, 'placeOrder'])->name('checkout.
 Route::get('/order-success', [CartController::class, 'success'])->name('order.success');
 
 // Payment Routes
+Route::get('/payment/pesapal/{order}', [\App\Http\Controllers\PaymentController::class, 'checkout'])
+    ->name('pesapal.checkout');
 Route::get('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])->name('payment.callback');
 Route::match(['get', 'post'], '/api/pesapal/ipn', [\App\Http\Controllers\PaymentController::class, 'ipn'])->name('api.pesapal.ipn');
 Route::get('/payment/mtn-momo/{reference}', [\App\Http\Controllers\MtnMomoPaymentController::class, 'pending'])->name('mtn-momo.pending');

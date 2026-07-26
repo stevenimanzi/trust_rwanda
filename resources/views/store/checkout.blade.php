@@ -19,7 +19,7 @@
                     <i class="bi bi-geo-alt-fill text-primary"></i> Delivery Details
                 </h3>
                 
-                <form id="checkoutForm" action="{{ route('checkout.place') }}" method="POST">
+                <form id="checkoutForm" action="{{ route('checkout.place') }}" method="POST" onsubmit="document.getElementById('submitBtn').innerHTML='<span class=\'spinner-border spinner-border-sm me-2\'></span> Redirecting securely...'; setTimeout(() => document.getElementById('submitBtn').disabled = true, 50);">
                     @csrf
                     
                     <div class="mb-4">
@@ -55,28 +55,29 @@
                         $vendorCount = count($vendorGroups);
                     @endphp
 
-                    <div class="d-grid gap-3 mb-4">
-                        <label class="payment-option d-flex align-items-center gap-3 p-3 border bg-white" style="border-radius: 8px; cursor: pointer;">
-                            <input class="form-check-input m-0" type="radio" name="payment_method" value="mtn_momo" checked>
-                            <span class="d-flex align-items-center justify-content-center fw-bold" style="width: 48px; height: 40px; border-radius: 6px; background: #ffcc00; color: #111;">MTN</span>
-                            <span>
-                                <strong class="d-block">MTN Mobile Money</strong>
-                                <small class="text-muted">Approve the payment prompt on your phone</small>
-                            </span>
-                        </label>
-                        <label class="payment-option d-flex align-items-center gap-3 p-3 border bg-white" style="border-radius: 8px; cursor: pointer;">
-                            <input class="form-check-input m-0" type="radio" name="payment_method" value="pesapal">
-                            <span class="d-flex align-items-center justify-content-center bg-primary text-white" style="width: 48px; height: 40px; border-radius: 6px;"><i class="bi bi-credit-card"></i></span>
-                            <span>
-                                <strong class="d-block">Card or other mobile money</strong>
-                                <small class="text-muted">Continue securely through Pesapal</small>
-                            </span>
-                        </label>
+                    <div class="d-grid">
+                        <div class="alert bg-primary-subtle border-0 rounded-4 p-4 mb-0 d-flex align-items-center gap-3">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                                <i class="bi bi-shield-lock-fill fs-4"></i>
+                            </div>
+                            <div>
+                                <strong class="d-block text-dark mb-1">Secure Payment Gateway</strong>
+                                <small class="text-muted">You will be securely redirected to Pesapal to choose your payment method (MTN MoMo, Airtel Money, or Bank Card).</small>
+                            </div>
+                        </div>
                     </div>
 
-                    <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 rounded-pill fw-extrabold shadow" style="font-size: 1.1rem; transition: transform 0.2s;">
+                @if(session('error'))
+                    <div class="alert alert-danger rounded-4 mt-3">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                    </div>
+                @endif
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-4 fw-bold shadow-sm d-flex justify-content-center align-items-center position-relative overflow-hidden" id="submitBtn">
                         Pay Now <i class="bi bi-shield-check ms-2"></i>
                     </button>
+                </div>
                 </form>
             </div>
         </div>
@@ -214,61 +215,6 @@ if (shareLocationBtn && addressField) {
         );
     });
 }
-
-document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const btn = document.getElementById('submitBtn');
-    const originalText = btn.innerHTML;
-    
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing order...';
-
-    try {
-        const formData = new FormData(this);
-        const response = await fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        const result = await response.json();
-
-        if (result.status === 'success') {
-            if (result.redirect_url) {
-                window.location.href = result.redirect_url;
-            } else {
-                window.location.href = "{{ route('order.success') }}";
-            }
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: result.message,
-                confirmButtonColor: 'var(--primary)',
-                customClass: {
-                    popup: 'rounded-4'
-                }
-            });
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
-    } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Connectivity Error',
-            text: error.message,
-            confirmButtonColor: 'var(--primary)',
-            customClass: {
-                popup: 'rounded-4'
-            }
-        });
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    }
-});
 </script>
 @endsection
 @endsection

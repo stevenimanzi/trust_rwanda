@@ -245,7 +245,7 @@ class CartController extends Controller
             if ($user) {
                 auth()->login($user);
             } else {
-                return response()->json(['status' => 'error', 'message' => 'Session expired. Please login.']);
+                return back()->with('error', 'Session expired. Please login.');
             }
         }
 
@@ -253,15 +253,14 @@ class CartController extends Controller
         $cart = session('cart', []);
 
         $request->validate([
-            'payment_method' => ['required', 'in:mtn_momo,pesapal'],
             'contact_phone' => ['required', 'string', 'max:30'],
             'address' => ['required', 'string', 'max:1000'],
         ]);
 
-        $paymentMethod = $request->input('payment_method');
+        $paymentMethod = 'pesapal';
 
         if (empty($cart)) {
-            return response()->json(['status' => 'error', 'message' => 'Cart is empty.']);
+            return back()->with('error', 'Cart is empty.');
         }
 
         $address = $request->input('address', 'Pickup at Store');
@@ -368,79 +367,17 @@ class CartController extends Controller
                 }
             }
 
-            if ($paymentMethod === 'mtn_momo') {
-                $momoService = new \App\Services\MtnMomoService();
-                $paymentReference = $momoService->requestToPay($transactionId, $phone, (float) $totalAmount);
-
-                Order::where('transaction_id', $transactionId)->update([
-                    'payment_reference' => $paymentReference,
-                ]);
-
-                DB::commit();
-                session()->forget(['cart', 'ref_user_id']);
-
-                return response()->json([
-                    'status' => 'success',
-                    'redirect_url' => route('mtn-momo.pending', ['reference' => $paymentReference]),
-                    'message' => 'Approve the MTN MoMo prompt on your phone.',
-                ]);
-            }
-
-            // --- PESAPAL INTEGRATION ---
-            $pesapalService = new \App\Services\PesapalService();
-            $token = $pesapalService->authenticate();
-
-            $ipnId = \Illuminate\Support\Facades\Cache::remember('pesapal_ipn_id', 3600*24*30, function() use ($pesapalService, $token) {
-                return $pesapalService->registerIPN($token, route('api.pesapal.ipn'));
-            });
-
-            // For testing, limit amount
-            $testAmount = $totalAmount > 50000 ? 100.00 : round($totalAmount, 2);
-
-            $orderData = [
-                "id" => $transactionId,
-                "currency" => "RWF",
-                "amount" => $testAmount,
-                "description" => "Trust Rwanda Order " . $transactionId,
-                "callback_url" => route('payment.callback'),
-                "notification_id" => $ipnId,
-                "billing_address" => [
-                    "email_address" => $user->email ?? 'buyer@trustrwanda.com',
-                    "phone_number" => $phone,
-                    "country_code" => "RW",
-                    "first_name" => $user->name ?? 'Buyer',
-                    "middle_name" => "",
-                    "last_name" => "",
-                    "line_1" => $address,
-                    "line_2" => "",
-                    "city" => "Kigali",
-                    "state" => "Kigali",
-                    "postal_code" => "",
-                    "zip_code" => ""
-                ]
-            ];
-
-            $pesapalResponse = $pesapalService->submitOrder($token, $orderData);
-
-            if (!isset($pesapalResponse['redirect_url'])) {
-                throw new \Exception('Failed to get redirect URL from Pesapal');
-            }
-
             DB::commit();
 
             session()->forget('cart');
             session()->forget('ref_user_id');
 
-            return response()->json([
-                'status' => 'success',
-                'redirect_url' => $pesapalResponse['redirect_url'],
-                'message' => 'Order created. Redirecting to payment gateway...'
-            ]);
+            return redirect()->route('pesapal.checkout', ['order' => $transactionId]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Checkout Payment Error: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            \Log::error('Checkout Error: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 

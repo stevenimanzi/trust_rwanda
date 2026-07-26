@@ -19,6 +19,68 @@ class PaymentController extends Controller
     ) {
     }
 
+    public function checkout(string $orderId)
+    {
+        try {
+            $orders = Order::where('transaction_id', $orderId)->get();
+            
+            if ($orders->isEmpty()) {
+                return redirect()->route('cart.index')->with('error', 'Order not found.');
+            }
+
+            $totalAmount = $orders->sum('total_amount');
+            $firstOrder = $orders->first();
+            $user = auth()->user() ?? (object)[
+                'email' => 'buyer@trustrwanda.com',
+                'name' => 'Buyer'
+            ];
+
+            $token = $this->pesapalService->authenticate();
+
+            $ipnId = \Illuminate\Support\Facades\Cache::remember('pesapal_ipn_id', 3600*24*30, function() use ($token) {
+                return $this->pesapalService->registerIPN($token, route('api.pesapal.ipn'));
+            });
+
+            // For testing, limit amount
+            $testAmount = $totalAmount > 50000 ? 100.00 : round($totalAmount, 2);
+
+            $orderData = [
+                "id" => $orderId,
+                "currency" => "RWF",
+                "amount" => $testAmount,
+                "description" => "Trust Rwanda Order " . $orderId,
+                "callback_url" => route('payment.callback'),
+                "notification_id" => $ipnId,
+                "billing_address" => [
+                    "email_address" => $user->email ?? 'buyer@trustrwanda.com',
+                    "phone_number" => $firstOrder->phone ?? '',
+                    "country_code" => "RW",
+                    "first_name" => $user->name ?? 'Buyer',
+                    "middle_name" => "",
+                    "last_name" => "",
+                    "line_1" => $firstOrder->address ?? '',
+                    "line_2" => "",
+                    "city" => "Kigali",
+                    "state" => "Kigali",
+                    "postal_code" => "",
+                    "zip_code" => ""
+                ]
+            ];
+
+            $pesapalResponse = $this->pesapalService->submitOrder($token, $orderData);
+
+            if (!isset($pesapalResponse['redirect_url'])) {
+                throw new \Exception('Failed to get redirect URL from Pesapal');
+            }
+
+            return redirect()->away($pesapalResponse['redirect_url']);
+
+        } catch (\Exception $e) {
+            Log::error('Pesapal Checkout Error: ' . $e->getMessage());
+            return redirect()->route('cart.index')->with('error', $e->getMessage());
+        }
+    }
+
     public function callback(Request $request): RedirectResponse
     {
         $validated = $request->validate([
