@@ -1,4 +1,7 @@
 <?php 
+App::setLocale('en');
+session()->put('locale', 'en');
+
 if (!function_exists('kura_rating_icon_html')) {
     function kura_rating_icon_html(float $avgRating): string {
         $avgRating = max(0, min(5, $avgRating));
@@ -21,240 +24,85 @@ if (!function_exists('kura_csrf_token')) {
     }
 }
 
-$navCategories = [
-    'rw' => [
-        'farmers' => [
-            'title' => 'Abahinzi & Umusaruro',
-            'icon' => 'bi-flower1',
-            'link' => 'farmers-market',
-            'subs' => [
-                'farmers-market' => 'Umusaruro Wose',
-                'farmers-market?category=fruits' => 'Imbuto Nshya (Fruits)',
-                'farmers-market?category=vegetables' => 'Imboga Zicyeye',
-                'farmers-market?category=grains' => 'Impeke & Ibinyampeke',
-                'farmers-market?category=dairy' => 'Amata & Ubuki (Dairy)',
-                'farmers-market?category=meat' => 'Inyama & Amatungo Magufi',
-            ]
-        ],
-        'real_estate' => [
-            'title' => 'Imitungo Itimukanwa',
-            'icon' => 'bi-buildings',
-            'link' => 'real_estate',
-            'subs' => [
-                'real_estate' => 'Imitungo Yose',
-                'real_estate?category=rent-house' => 'Inzu Zikodeshwa (Houses)',
-                'real_estate?category=rent-apartment' => 'Fleti Zikodeshwa (Apartments)',
-                'real_estate?category=rent-guest-house' => 'Inzu z\'Abashyitsi (Guest House)',
-                'real_estate?category=rent-ghetto' => 'Ghetto Zikodeshwa',
-                'real_estate?category=sale-house' => 'Inzu Zigurishwa',
-                'real_estate?category=sale-land' => 'Ibibanza Bigurishwa (Lands)',
-            ]
-        ],
-        'fashion' => [
-            'title' => 'Imyambaro & Imideli',
-            'icon' => 'bi-handbag',
-            'link' => 'products?category=fashion',
-            'subs' => [
-                'products?category=fashion' => 'Imyambaro Yose',
-                'products?category=clothes' => 'Imyenda (Clothes)',
-                'products?category=shoes' => 'Inkweto (Shoes)',
-                'products?category=accessories-fashion' => 'Amashakoshi & Imitako',
-            ]
-        ],
-        'electronics' => [
-            'title' => 'Elegitoroniki',
-            'icon' => 'bi-laptop',
-            'link' => 'products?category=electronics',
-            'subs' => [
-                'products?category=electronics' => 'Elegitoroniki Yose',
-                'products?category=mobile-phones' => 'Telefoni Zikoreshwa',
-                'products?category=laptops-computers' => 'Orudinateri & Laptops',
-                'products?category=tablets' => 'Tabuleti (Tablets)',
-                'products?category=smartwatches' => 'Isaha z\'Ubwenge (Smartwatch)',
-                'products?category=accessories' => 'Ibikoresho by\'Umva & Umugozi',
-                'products?category=tv-systems' => 'Televiziyo & Indangururamajwi',
-                'products?category=speakers-audio' => 'Imizindaro (Speakers)',
-                'products?category=gaming' => 'Imikino ya Videwo (Gaming)',
-                'products?category=smart-home' => 'Ibikoresho By\'ubwenge byo mu rugo',
-            ]
-        ],
-        'second_hand' => [
-            'title' => 'Ibyakoreshejwe',
-            'icon' => 'bi-recycle',
-            'link' => 'products?category=second-hand',
-            'subs' => [
-                'products?category=second-hand' => 'Ibyakoreshejwe Byose',
-                'products?category=used-vehicles' => 'Imodoka & Moto zikoreshejwe',
-                'products?category=used-mobile-phones' => 'Telefoni za Caguwa',
-                'products?category=used-laptops' => 'Laptops Zikoreshejwe',
-                'products?category=used-televisions' => 'TV Zikoreshejwe',
-                'products?category=used-furniture' => 'Intebe & Ameza Zikoreshejwe',
-                'products?category=used-electronics' => 'Elegitoroniki Zikoreshejwe',
-            ]
-        ],
-
-        'nearby_shops' => [
-            'title' => 'Amaduka Hafi Yanjye',
-            'icon' => 'bi-geo-alt-fill',
-            'link' => 'nearby-shops',
-            'subs' => [
-                'nearby-shops' => 'Amaduka Yose ya Hafi'
-            ]
+$langData = [
+    'farmers' => [
+        'title' => 'Farmers & Harvest',
+        'icon' => 'bi-flower1',
+        'link' => 'farmers-market',
+        'subs' => [
+            'farmers-market' => 'All Harvest',
+            'farmers-market?category=fruits' => 'Fresh Fruits',
+            'farmers-market?category=vegetables' => 'Fresh Vegetables',
+            'farmers-market?category=grains' => 'Cereals & Grains',
+            'farmers-market?category=dairy' => 'Dairy & Honey',
+            'farmers-market?category=meat' => 'Meat & Poultry',
         ]
     ],
-    'en' => [
-        'farmers' => [
-            'title' => 'Farmers & Harvest',
-            'icon' => 'bi-flower1',
-            'link' => 'farmers-market',
-            'subs' => [
-                'farmers-market' => 'All Harvest',
-                'farmers-market?category=fruits' => 'Fresh Fruits',
-                'farmers-market?category=vegetables' => 'Fresh Vegetables',
-                'farmers-market?category=grains' => 'Cereals & Grains',
-                'farmers-market?category=dairy' => 'Dairy & Honey',
-                'farmers-market?category=meat' => 'Meat & Poultry',
-            ]
-        ],
-        'real_estate' => [
-            'title' => 'Real Estate',
-            'icon' => 'bi-buildings',
-            'link' => 'real_estate',
-            'subs' => [
-                'real_estate' => 'All Properties',
-                'real_estate?category=rent-house' => 'Houses for Rent',
-                'real_estate?category=rent-apartment' => 'Apartments for Rent',
-                'real_estate?category=rent-guest-house' => 'Guest Houses',
-                'real_estate?category=rent-ghetto' => 'Ghettos for Rent',
-                'real_estate?category=sale-house' => 'Houses for Sale',
-                'real_estate?category=sale-land' => 'Lands & Plots for Sale',
-            ]
-        ],
-        'fashion' => [
-            'title' => 'Fashion & Clothing',
-            'icon' => 'bi-handbag',
-            'link' => 'products?category=fashion',
-            'subs' => [
-                'products?category=fashion' => 'All Fashion',
-                'products?category=clothes' => 'Clothes & Apparel',
-                'products?category=shoes' => 'Shoes & Footwear',
-                'products?category=accessories-fashion' => 'Bags, Jewelry & Accessories',
-            ]
-        ],
-        'electronics' => [
-            'title' => 'Electronics',
-            'icon' => 'bi-laptop',
-            'link' => 'products?category=electronics',
-            'subs' => [
-                'products?category=electronics' => 'All Electronics',
-                'products?category=mobile-phones' => 'Smartphones & Tablets',
-                'products?category=laptops-computers' => 'Laptops & Computers',
-                'products?category=tablets' => 'Tablets & E-readers',
-                'products?category=smartwatches' => 'Smartwatches & Wearables',
-                'products?category=accessories' => 'Accessories & Headphones',
-                'products?category=tv-systems' => 'TV & Home Systems',
-                'products?category=speakers-audio' => 'Speakers & Audio',
-                'products?category=gaming' => 'Gaming & Consoles',
-                'products?category=smart-home' => 'Smart Home Devices',
-            ]
-        ],
-        'second_hand' => [
-            'title' => 'Second Hand',
-            'icon' => 'bi-recycle',
-            'link' => 'products?category=second-hand',
-            'subs' => [
-                'products?category=second-hand' => 'All Used Goods',
-                'products?category=used-vehicles' => 'Used Vehicles & Motos',
-                'products?category=used-mobile-phones' => 'Used Mobile Phones',
-                'products?category=used-laptops' => 'Used Laptops & Computers',
-                'products?category=used-televisions' => 'Used Televisions',
-                'products?category=used-furniture' => 'Pre-owned Furniture',
-                'products?category=used-electronics' => 'Used Electronics',
-            ]
-        ],
-
-        'nearby_shops' => [
-            'title' => 'Near Me Shops',
-            'icon' => 'bi-geo-alt-fill',
-            'link' => 'nearby-shops',
-            'subs' => [
-                'nearby-shops' => 'All Nearby Shops'
-            ]
+    'real_estate' => [
+        'title' => 'Real Estate',
+        'icon' => 'bi-buildings',
+        'link' => 'real_estate',
+        'subs' => [
+            'real_estate' => 'All Properties',
+            'real_estate?category=rent-house' => 'Houses for Rent',
+            'real_estate?category=rent-apartment' => 'Apartments for Rent',
+            'real_estate?category=rent-guest-house' => 'Guest Houses',
+            'real_estate?category=rent-ghetto' => 'Ghettos for Rent',
+            'real_estate?category=sale-house' => 'Houses for Sale',
+            'real_estate?category=sale-land' => 'Lands & Plots for Sale',
         ]
     ],
-    'sw' => [
-        'farmers' => [
-            'title' => 'Wakulima na Mavuno',
-            'icon' => 'bi-flower1',
-            'link' => 'farmers-market',
-            'subs' => [
-                'farmers-market' => 'Mavuno Yote',
-                'farmers-market?category=fruits' => 'Matunda Mapya',
-                'farmers-market?category=vegetables' => 'Mboga Mpya',
-                'farmers-market?category=grains' => 'Nafaka',
-                'farmers-market?category=dairy' => 'Maziwa na Asali',
-                'farmers-market?category=meat' => 'Nyama na Kuku',
-            ]
-        ],
-        'real_estate' => [
-            'title' => 'Mali isiyohamishika',
-            'icon' => 'bi-buildings',
-            'link' => 'real_estate',
-            'subs' => [
-                'real_estate' => 'Mali Zote',
-                'real_estate?category=rent-house' => 'Nyumba za Kupanga',
-                'real_estate?category=rent-apartment' => 'Fleti za Kupanga',
-                'real_estate?category=rent-guest-house' => 'Nyumba za Wageni',
-                'real_estate?category=rent-ghetto' => 'Ghetto za Kupanga',
-                'real_estate?category=sale-house' => 'Nyumba za Kuuza',
-                'real_estate?category=sale-land' => 'Viwanja vya Kuuza',
-            ]
-        ],
-        'electronics' => [
-            'title' => 'Elektroniki',
-            'icon' => 'bi-laptop',
-            'link' => 'products?category=electronics',
-            'subs' => [
-                'products?category=electronics' => 'Elektroniki Zote',
-                'products?category=mobile-phones' => 'Simu na Vidonge',
-                'products?category=laptops-computers' => 'Kompyuta na Laptops',
-                'products?category=tablets' => 'Vidonge (Tablets)',
-                'products?category=smartwatches' => 'Saa za Kisasa (Smartwatch)',
-                'products?category=accessories' => 'Vifaa vya Masikio & Headphones',
-                'products?category=tv-systems' => 'TV na Mifumo ya Sauti',
-                'products?category=speakers-audio' => 'Spika na Sauti',
-                'products?category=gaming' => 'Michezo (Gaming)',
-                'products?category=smart-home' => 'Vifaa vya Nyumbani vya Kisasa',
-            ]
-        ],
-        'second_hand' => [
-            'title' => 'Bidhaa Zilizotumika',
-            'icon' => 'bi-recycle',
-            'link' => 'products?category=second-hand',
-            'subs' => [
-                'products?category=second-hand' => 'Bidhaa Zote',
-                'products?category=used-vehicles' => 'Magari na Pikipiki Zilizotumika',
-                'products?category=used-mobile-phones' => 'Simu Zilizotumika',
-                'products?category=used-laptops' => 'Kompyuta Zilizotumika',
-                'products?category=used-televisions' => 'TV Zilizotumika',
-                'second-hand?category=used-furniture' => 'Samani Zilizotumika',
-                'products?category=used-electronics' => 'Elektroniki Zilizotumika',
-            ]
-        ],
-
-        'nearby_shops' => [
-            'title' => 'Maduka Karibu Nami',
-            'icon' => 'bi-geo-alt-fill',
-            'link' => 'nearby-shops',
-            'subs' => [
-                'nearby-shops' => 'Maduka Yote ya Karibu'
-            ]
+    'fashion' => [
+        'title' => 'Fashion & Clothing',
+        'icon' => 'bi-handbag',
+        'link' => 'products?category=fashion',
+        'subs' => [
+            'products?category=fashion' => 'All Fashion',
+            'products?category=clothes' => 'Clothes & Apparel',
+            'products?category=shoes' => 'Shoes & Footwear',
+            'products?category=accessories-fashion' => 'Bags, Jewelry & Accessories',
+        ]
+    ],
+    'electronics' => [
+        'title' => 'Electronics',
+        'icon' => 'bi-laptop',
+        'link' => 'products?category=electronics',
+        'subs' => [
+            'products?category=electronics' => 'All Electronics',
+            'products?category=mobile-phones' => 'Smartphones & Tablets',
+            'products?category=laptops-computers' => 'Laptops & Computers',
+            'products?category=tablets' => 'Tablets & E-readers',
+            'products?category=smartwatches' => 'Smartwatches & Wearables',
+            'products?category=accessories' => 'Accessories & Headphones',
+            'products?category=tv-systems' => 'TV & Home Systems',
+            'products?category=speakers-audio' => 'Speakers & Audio',
+            'products?category=gaming' => 'Gaming & Consoles',
+            'products?category=smart-home' => 'Smart Home Devices',
+        ]
+    ],
+    'second_hand' => [
+        'title' => 'Second Hand',
+        'icon' => 'bi-recycle',
+        'link' => 'products?category=second-hand',
+        'subs' => [
+            'products?category=second-hand' => 'All Used Goods',
+            'products?category=used-vehicles' => 'Used Vehicles & Motos',
+            'products?category=used-mobile-phones' => 'Used Mobile Phones',
+            'products?category=used-laptops' => 'Used Laptops & Computers',
+            'products?category=used-televisions' => 'Used Televisions',
+            'products?category=used-furniture' => 'Pre-owned Furniture',
+            'products?category=used-electronics' => 'Used Electronics',
+        ]
+    ],
+    'nearby_shops' => [
+        'title' => 'Near Me Shops',
+        'icon' => 'bi-geo-alt-fill',
+        'link' => 'nearby-shops',
+        'subs' => [
+            'nearby-shops' => 'All Nearby Shops'
         ]
     ]
 ];
-
-// Fallback logic for langData
-$langData = $navCategories[App::getLocale()] ?? $navCategories['en'];
 
 if (!function_exists('isActive')) {
     function isActive($routeKey, $category = null) {
@@ -302,7 +150,7 @@ $supportEmail = 'support@trustrwanda.com';
 $cleanPhone = '250780000000';
 $footerCategories = [];
 ?><!DOCTYPE html>
-<html lang="{{App::getLocale()}}">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -669,23 +517,21 @@ $footerCategories = [];
 
             <!-- Actions Separation -->
             <div class="d-flex align-items-center gap-3">
-                <!-- 🌐 Direct Visible Language Switcher Pill -->
+                <!-- 🌐 Custom Google Translate Switcher -->
                 <div class="dropdown">
                     <a href="#" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 py-1.5 d-flex align-items-center gap-1.5 text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.78rem; border-color: #e2e8f0; color: #475569; background: white;">
-                        <i class="bi bi-globe"></i> <span>{{strtoupper(App::getLocale())}}</span>
+                        <i class="bi bi-translate"></i> <span>Language</span>
                         <i class="bi bi-chevron-down" style="font-size: 0.55rem;"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2 mt-2" style="border-radius: 12px; min-width: 140px; z-index: 1060;">
-                        @foreach(['rw', 'en', 'sw'] as $langCode)
-                            <li>
-                                <a class="dropdown-item rounded-3 py-2 fw-bold d-flex align-items-center gap-2 {{$langCode === App::getLocale() ? 'bg-primary-subtle text-primary' : 'text-secondary'}}" href="{{imanzi_language_url($langCode)}}" style="font-size: 0.8rem;">
-                                    <i class="bi bi-globe text-muted"></i>
-                                    <span>{{imanzi_language_label($langCode)}}</span>
-                                </a>
-                            </li>
-                        @endforeach
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2 mt-2" style="border-radius: 12px; min-width: 150px; z-index: 1060;">
+                        <li><a class="dropdown-item rounded-3 py-2 fw-bold d-flex align-items-center gap-2 text-secondary" href="#" onclick="doGTranslate('en');return false;"><span>🇬🇧 English</span></a></li>
+                        <li><a class="dropdown-item rounded-3 py-2 fw-bold d-flex align-items-center gap-2 text-secondary" href="#" onclick="doGTranslate('rw');return false;"><span>🇷🇼 Kinyarwanda</span></a></li>
+                        <li><a class="dropdown-item rounded-3 py-2 fw-bold d-flex align-items-center gap-2 text-secondary" href="#" onclick="doGTranslate('sw');return false;"><span>🇰🇪 Swahili</span></a></li>
+                        <li><a class="dropdown-item rounded-3 py-2 fw-bold d-flex align-items-center gap-2 text-secondary" href="#" onclick="doGTranslate('fr');return false;"><span>🇫🇷 French</span></a></li>
                     </ul>
                 </div>
+                <!-- Hidden Google Translate Element -->
+                <div id="google_translate_element" style="display:none;"></div>
 
                 <!-- Shopping Cart -->
                 <a href="{{url('/')}}/cart" class="icon-btn-pro border shadow-sm">
@@ -702,7 +548,7 @@ $footerCategories = [];
             <!-- Desktop Drawer Actions -->
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1 d-lg-none">
-                    <li class="nav-item"><a class="nav-link-pro {{isActive('home')}}" href="{{route('home')}}"><i class="bi bi-house"></i> {{__('home')}}</a></li>
+                    <li class="nav-item"><a class="nav-link-pro {{isActive('home')}}" href="{{route('home')}}"><i class="bi bi-house"></i> Home</a></li>
                     <li class="nav-item"><a class="nav-link-pro {{isActive('products')}}" href="{{url('/')}}/products"><i class="bi bi-grid"></i> Marketplace</a></li>
                     <li class="nav-item"><a class="nav-link-pro" href="{{url('/')}}/profile"><i class="bi bi-person"></i> My Dashboard</a></li>
                 </ul>
@@ -720,20 +566,20 @@ $footerCategories = [];
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 p-2" style="border-radius: 18px; min-width: 220px; z-index: 1060;">
                                 <?php if($userRole === 'admin'): ?>
-                                    <li><a class="dropdown-item rounded-3 mb-1 bg-primary-subtle text-primary fw-bold py-2" href="{{url('/')}}/admin/dashboard"><i class="bi bi-shield-lock-fill me-2"></i> {{__('admin_panel')}}</a></li>
+                                    <li><a class="dropdown-item rounded-3 mb-1 bg-primary-subtle text-primary fw-bold py-2" href="{{url('/')}}/admin/dashboard"><i class="bi bi-shield-lock-fill me-2"></i> Admin Panel</a></li>
                                 @elseif($userRole === 'vendor')
-                                    <li><a class="dropdown-item rounded-3 mb-1 bg-primary-subtle text-primary fw-bold py-2" href="{{url('/')}}/vendor/dashboard"><i class="bi bi-shop-window me-2"></i> {{__('vendor_panel')}}</a></li>
+                                    <li><a class="dropdown-item rounded-3 mb-1 bg-primary-subtle text-primary fw-bold py-2" href="{{url('/')}}/vendor/dashboard"><i class="bi bi-shop-window me-2"></i> Vendor Panel</a></li>
                                 @elseif($userRole === 'real_estate_owner')
                                     <li><a class="dropdown-item rounded-3 mb-1 bg-primary-subtle text-primary fw-bold py-2" href="{{url('/')}}/property_owner/dashboard"><i class="bi bi-houses me-2"></i> Owner Dashboard</a></li>
                                 @endif
-                                <li><a class="dropdown-item rounded-3 py-2" href="{{url('/')}}/profile"><i class="bi bi-person-circle me-2"></i> {{__('account_settings')}}</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="{{url('/')}}/profile"><i class="bi bi-person-circle me-2"></i> Account Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item rounded-3 text-danger fw-bold py-2" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-power me-2"></i> {{__('sign_out')}}</a></li>
+                                <li><a class="dropdown-item rounded-3 text-danger fw-bold py-2" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bi bi-power me-2"></i> Sign Out</a></li>
                             </ul>
                         </div>
                     @else
-                        <a href="{{url('/')}}/login" class="btn btn-login-pro text-secondary fw-bold" style="font-size: 0.85rem;">{{__('log_in')}}</a>
-                        <a href="{{url('/')}}/register" class="btn-join">{{__('join_kura')}}</a>
+                        <a href="{{url('/')}}/login" class="btn btn-login-pro text-secondary fw-bold" style="font-size: 0.85rem;">Log In</a>
+                        <a href="{{url('/')}}/register" class="btn-join">Join Trust Rwanda</a>
                     @endif
                 </div>
             </div>
@@ -754,7 +600,7 @@ $footerCategories = [];
                 
                 <!-- 🏠 Home Pill Link -->
                 <a href="{{route('home')}}" class="market-pill-btn {{isActive('home')}}">
-                    <i class="bi bi-house-door-fill text-primary" style="font-size: 0.85rem;"></i> <span>{{__('home')}}</span>
+                    <i class="bi bi-house-door-fill text-primary" style="font-size: 0.85rem;"></i> <span>Home</span>
                 </a>
                 
                 <!-- DYNAMIC PORTAL NODES (Farmers, Real Estate, Electronics, Second Hand, Affiliate) -->
@@ -1002,10 +848,10 @@ $footerCategories = [];
         <div class="container-fluid px-0">
             <div class="d-flex flex-column flex-md-row align-items-center justify-content-between small">
                 <div class="text-muted mb-2 mb-md-0 fw-medium">
-                    &copy; {{date('Y')}} {{$siteName}}. {{__('all_rights_reserved')}}
+                    &copy; {{date('Y')}} {{$siteName}}. All Rights Reserved.
                 </div>
                 <div class="text-muted">
-                    {{__('designed_and_developed_by')}} <a href="https://stevenimanzi.kesug.com" target="_blank" class="text-decoration-none fw-bold text-primary">Steven IMANZI</a>
+                    Designed and Developed by <a href="https://stevenimanzi.kesug.com" target="_blank" class="text-decoration-none fw-bold text-primary">Steven IMANZI</a>
                 </div>
             </div>
         </div>
@@ -1487,5 +1333,43 @@ document.addEventListener('DOMContentLoaded', function() {
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
     @csrf
 </form>
+<!-- Google Translate Scripts -->
+<style>
+    /* Hide top Google frame and tooltips completely */
+    .goog-te-banner-frame { display: none !important; }
+    .goog-tooltip { display: none !important; }
+    .goog-tooltip:hover { display: none !important; }
+    .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+    body { top: 0 !important; }
+    #google_translate_element { display: none !important; }
+</style>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+      pageLanguage: 'en', 
+      includedLanguages: 'en,rw,sw,fr',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+  }, 'google_translate_element');
+}
+
+function doGTranslate(langCode) {
+    // Check if Google Translate iframe/combo is loaded
+    var teCombo = document.querySelector('.goog-te-combo');
+    if (teCombo) {
+        teCombo.value = langCode;
+        teCombo.dispatchEvent(new Event('change'));
+    } else {
+        // Fallback: If combo is not found, set cookie and reload
+        var langPair = '/en/' + langCode;
+        if(langCode == 'en') langPair = '/en/en';
+        document.cookie = "googtrans=" + langPair + "; path=/;";
+        document.cookie = "googtrans=" + langPair + "; path=/; domain=" + window.location.hostname;
+        window.location.reload();
+    }
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>

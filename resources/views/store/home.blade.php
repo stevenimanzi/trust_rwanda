@@ -1035,7 +1035,7 @@
         <!-- Main Left Banner: Dynamic Carousel for Key Service Pillars -->
         <div class="hero-banner-main" id="heroMainSlider" style="background-image: linear-gradient(90deg, #064e3b 0%, rgba(6, 78, 59, 0.75) 50%, rgba(6, 78, 59, 0.25) 100%), url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop');">
             <div class="banner-main-content">
-                <span class="banner-badge" id="slideBadge">{{__('fresh_foods') ?: 'Farmers Market'}}</span>
+                <span class="banner-badge" id="slideBadge">Farmers Market</span>
                 <h1 class="banner-title" id="slideTitle">Rwandan Fresh<br>Harvest Market</h1>
                 <p class="banner-subtitle" id="slideDesc">Straight from local farms to your home. Direct sourcing, fast organic produce delivery, and guaranteed local rates.</p>
                 <a href="{{url('/')}}/farmers-market" class="btn-shop-now-pill" id="slideLink">Shop Farm Fresh <i class="bi bi-arrow-right"></i></a>
@@ -1095,9 +1095,9 @@
     <!-- ════════ FLASH DEALS SECTION ════════ -->
     <div class="flash-section-wrap">
         <div class="flash-top-bar">
-            <h4><i class="bi bi-lightning-charge-fill text-warning"></i> {{__('flash_deals')}} <span class="flash-live-badge">{{__('live_now')}}</span></h4>
+            <h4><i class="bi bi-lightning-charge-fill text-warning"></i> Flash Deals <span class="flash-live-badge">Live Now</span></h4>
             <div class="flash-countdown">
-                <span class="ends-lbl">{{__('ends_in')}}</span>
+                <span class="ends-lbl">Ends in</span>
                 <div class="cd-box"><span class="cd-num" id="cd-h">24</span><span class="cd-lbl">Hrs</span></div>
                 <span class="cd-colon">:</span>
                 <div class="cd-box"><span class="cd-num" id="cd-m">00</span><span class="cd-lbl">Min</span></div>
@@ -1139,7 +1139,7 @@
                     </div>
                 </div>
                 <?php endforeach; else: ?>
-                    <p class="text-muted p-4">{{__('no_active_flash_deals')}}</p>
+                    <p class="text-muted p-4">No active flash deals at the moment.</p>
                 @endif
             </div>
         </div>
@@ -1204,14 +1204,14 @@
 <div class="container">
     <!-- ════════ SPONSORED BANNER ════════ -->
     <div class="ad-slot-native">
-        <span class="ad-tag">{{__('sponsored')}}</span>
+        <span class="ad-tag">Sponsored</span>
         <div class="ad-native-inner">
             <div class="ad-native-icon"><i class="bi bi-stars"></i></div>
             <div class="ad-native-copy">
-                <h6>{{__('advertise_business_title')}}</h6>
-                <p>{{__('advertise_business_copy')}}</p>
+                <h6>Advertise your business on Trust Rwanda</h6>
+                <p>Reach over 50,000 monthly buyers across Rwanda.</p>
             </div>
-            <a href="{{url('/')}}/advertise" class="ad-native-cta">{{__('get_started')}}</a>
+            <a href="{{url('/')}}/advertise" class="ad-native-cta">Get Started</a>
         </div>
     </div>
 </div>
@@ -1219,8 +1219,8 @@
 <div class="container mb-5">
     <!-- ════════ NEW ARRIVALS GRID ════════ -->
     <div class="sec-header">
-        <h4>{{__('new_products')}}</h4>
-        <a href="{{url('/')}}/products&sort=newest" class="text-decoration-none text-muted small">{{__('view_all')}} <i class="bi bi-chevron-right"></i></a>
+        <h4>New Arrivals</h4>
+        <a href="{{url('/')}}/products&sort=newest" class="text-decoration-none text-muted small">View All <i class="bi bi-chevron-right"></i></a>
     </div>
     <div class="trending-grid-custom">
         <?php foreach(collect($newArrivals)->take(5) as $p): 
@@ -1263,36 +1263,6 @@
 
 <?php
 $secTitles = [
-    'rw' => [
-        'real_estate_title' => 'Imitungo Itimukanwa Iheruka',
-        'real_estate_sub' => 'Reba amazu ndetse n\'ibibanza bigurishwa cyangwa bikodeshwa mu Rwanda',
-        'contact_agent' => 'Vugana na Nyirabyo',
-        'view_details' => 'Reba Ibirambuye',
-        'rent' => 'Gukodesha',
-        'sale' => 'Kugura',
-        'beds' => 'Ibyumba',
-        'baths' => 'Ubwiherero',
-        
-        'neighborhoods_title' => 'Ahantu Hagezweho Hagurishwa cyangwa Hakodeshwa',
-        'neighborhoods_sub' => 'Shakisha imitungo mu bice bikunzwe mu mujyi wa Kigali no mu Rwanda',
-        'listings_count' => 'Imitungo ihari',
-        
-        'workflow_title' => 'Uko Trust Rwanda Ikora',
-        'workflow_sub' => 'Uburyo bworoshye bwo kugura, kugurisha, no kubona inyungu nk\'umushyigikiro',
-        'workflow_buy_title' => '1. Gura mu Mutekano',
-        'workflow_buy_desc' => 'Shakisha ibiribwa bishya, ibikoresho bya elegitoroniki, cyangwa inzu zizewe mu Rwanda.',
-        'workflow_sell_title' => '2. Gurisha vuba',
-        'workflow_sell_desc' => 'Fungura iduka ryawe ucururize abakiriya benshi ku rates nziza cyane.',
-        'workflow_earn_title' => '3. Winjiza Komisiyo',
-        'workflow_earn_desc' => 'Sangiza abandi link yawe maze ubone komisiyo igeze kuri 10% kuri buri deal ifunzwe.',
-        
-        'safety_title' => 'Gura Ibiribwa ndetse n\'Imitungo ku Mutekano 100%',
-        'safety_desc' => 'Muri Trust Rwanda dushyira imbere umutekano w\'umukiriya. Ntugakore payment utarabona ibyo ugura ngo ubyemeze!',
-        'safety_item_1' => 'Sura mbere yo kwishyura',
-        'safety_item_2' => 'Escrow / Kurinda Abaguzi',
-        'safety_item_3' => 'Amaduka yemejwe na Trust',
-        'safety_item_4' => 'Gufasha abaguzi 24/7'
-    ],
     'en' => [
         'real_estate_title' => 'Latest Property Listings',
         'real_estate_sub' => 'Explore residential homes, ghettos, and commercial land for rent or sale',
@@ -1322,39 +1292,9 @@ $secTitles = [
         'safety_item_2' => 'Secured Escrow Deals',
         'safety_item_3' => 'Verified Vendor Shops',
         'safety_item_4' => '24/7 Support Hotline'
-    ],
-    'sw' => [
-        'real_estate_title' => 'Mali Mpya Isiyohamishika',
-        'real_estate_sub' => 'Gundua nyumba za kuishi, vyumba, na ardhi kwa ajili ya kupangisha au kuuza',
-        'contact_agent' => 'Mawasiliano',
-        'view_details' => 'Angalia Maelezo',
-        'rent' => 'Ya Kupangisha',
-        'sale' => 'Ya Kuuzwa',
-        'beds' => 'Vyumba',
-        'baths' => 'Bafu',
-        
-        'neighborhoods_title' => 'Vinjari Maeneo Maarufu',
-        'neighborhoods_sub' => 'Tafuta mali zilizothibitishwa katika maeneo maarufu nchini Rwanda',
-        'listings_count' => 'mali zilizopo',
-        
-        'workflow_title' => 'Jinsi Trust Rwanda Inavyofanya Kazi',
-        'workflow_sub' => 'Soko rahisi na salama kwa wanunuzi, wauzaji, na washirika wa uuzaji',
-        'workflow_buy_title' => '1. Tafuta na Ununue',
-        'workflow_buy_desc' => 'Pata chakula kibichi cha shambani, vifaa vya kielektroniki, au nyumba zilizothibitishwa.',
-        'workflow_sell_title' => '2. Uza na Kupangisha',
-        'workflow_sell_desc' => 'Fungua duka lako la kidijitali na ufikie maelfu ya wateja nchini Rwanda.',
-        'workflow_earn_title' => '3. Shiriki na Upate Hela',
-        'workflow_earn_desc' => 'Tangaza bidhaa na kupata hadi 10% ya tume ya mauzo yaliyofanikiwa.',
-        
-        'safety_title' => 'Dhamana Salama ya Mnunuzi 100%',
-        'safety_desc' => 'Usalama wako wa kifedha ndio kipaumbele chetu kikuu. Usilipe kamwe kabla ya kuona bidhaa au nyumba.',
-        'safety_item_1' => 'Thibitisha Kabla ya Kulipa',
-        'safety_item_2' => 'Ulinzi wa Escrow Salama',
-        'safety_item_3' => 'Maduka ya Wauzaji Salama',
-        'safety_item_4' => 'Msaada wa Simu 24/7'
     ]
 ];
-$secData = $secTitles[app()->getLocale()] ?? $secTitles['en'];
+$secData = $secTitles['en'];
 ?>
 
 <!-- ════════ REAL ESTATE SHOWCASE SECTION (NEW!) ════════ -->
@@ -1364,7 +1304,7 @@ $secData = $secTitles[app()->getLocale()] ?? $secTitles['en'];
             <h4 class="mb-1">{{$secData['real_estate_title']}}</h4>
             <p class="text-muted small mb-0">{{$secData['real_estate_sub']}}</p>
         </div>
-        <a href="{{url('/')}}/real_estate" class="text-decoration-none text-muted small">{{__('view_all') ?: 'View All'}} <i class="bi bi-chevron-right"></i></a>
+        <a href="{{url('/')}}/real_estate" class="text-decoration-none text-muted small">View All <i class="bi bi-chevron-right"></i></a>
     </div>
     <div class="property-grid-custom">
         <?php if (!empty($realEstateListings)):
@@ -1526,7 +1466,7 @@ $secData = $secTitles[app()->getLocale()] ?? $secTitles['en'];
     <!-- ════════ CUSTOMER REVIEWS ════════ -->
     <div class="reviews-bg">
         <div class="sec-header" style="border-bottom-color:#ddd;">
-            <h4>{{__('what_our_customers_say')}}</h4>
+            <h4>What our customers say</h4>
             <div style="display:flex;align-items:center;gap:6px;">
                 <span style="color:var(--mega-yellow);font-size:0.82rem;"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></span>
                 <span style="font-size:0.78rem;color:#888;font-weight:600;">4.8 / 5 from 3,200+ reviews</span>
@@ -1579,19 +1519,19 @@ $secData = $secTitles[app()->getLocale()] ?? $secTitles['en'];
 </div>
 
 <div class="container" id="recentlySection">
-    <div class="sec-header"><h4>{{__('recently_viewed')}}</h4><button onclick="clearRecent()" class="btn btn-sm border-0 text-muted">{{__('clear')}}</button></div>
+    <div class="sec-header"><h4>Recently Viewed</h4><button onclick="clearRecent()" class="btn btn-sm border-0 text-muted">Clear</button></div>
     <div class="recently-row" id="recentlyRow"></div>
 </div>
 
 <div class="container">
     <!-- ════════ WHY SHOP WITH US / TRUST MODULE ════════ -->
     <div class="trust-section">
-        <div class="sec-header"><h4>{{__('why_shop_with_kura')}}</h4></div>
+        <div class="sec-header"><h4>Why shop with Trust Rwanda?</h4></div>
         <div class="trust-cards-grid">
-            <div class="trust-card"><div class="trust-icon-wrap ti-blue"><i class="bi bi-truck"></i></div><div class="trust-title">{{__('fast_delivery')}}</div></div>
-            <div class="trust-card"><div class="trust-icon-wrap ti-green"><i class="bi bi-shield-check"></i></div><div class="trust-title">{{__('protection_100')}}</div></div>
-            <div class="trust-card"><div class="trust-icon-wrap ti-yellow"><i class="bi bi-arrow-repeat"></i></div><div class="trust-title">{{__('returns_7_day')}}</div></div>
-            <div class="trust-card"><div class="trust-icon-wrap ti-red"><i class="bi bi-headset"></i></div><div class="trust-title">{{__('support_24_7')}}</div></div>
+            <div class="trust-card"><div class="trust-icon-wrap ti-blue"><i class="bi bi-truck"></i></div><div class="trust-title">Fast Delivery Anywhere</div></div>
+            <div class="trust-card"><div class="trust-icon-wrap ti-green"><i class="bi bi-shield-check"></i></div><div class="trust-title">100% Buyer Protection</div></div>
+            <div class="trust-card"><div class="trust-icon-wrap ti-yellow"><i class="bi bi-arrow-repeat"></i></div><div class="trust-title">7-Day Free Returns</div></div>
+            <div class="trust-card"><div class="trust-icon-wrap ti-red"><i class="bi bi-headset"></i></div><div class="trust-title">24/7 Priority Support</div></div>
         </div>
 
         <div class="stats-bar-container">
@@ -1599,22 +1539,22 @@ $secData = $secTitles[app()->getLocale()] ?? $secTitles['en'];
                 <div class="stat-cell">
                     <i class="bi bi-box-seam stat-icon"></i>
                     <span class="stat-num" data-target="{{$displayProducts}}">0</span>
-                    <span class="stat-lbl">{{__('active_products')}}</span>
+                    <span class="stat-lbl">Active Products</span>
                 </div>
                 <div class="stat-cell">
                     <i class="bi bi-shop stat-icon"></i>
                     <span class="stat-num" data-target="{{$displayVendors}}">0</span>
-                    <span class="stat-lbl">{{__('verified_shops')}}</span>
+                    <span class="stat-lbl">Verified Shops</span>
                 </div>
                 <div class="stat-cell highlight">
                     <i class="bi bi-emoji-smile stat-icon"></i>
                     <span class="stat-num" data-target="{{$displayClients}}">0</span>
-                    <span class="stat-lbl">{{__('happy_clients')}}</span>
+                    <span class="stat-lbl">Happy Clients</span>
                 </div>
                 <div class="stat-cell">
                     <i class="bi bi-geo-alt stat-icon"></i>
                     <span class="stat-num" data-target="30">0</span>
-                    <span class="stat-lbl">{{__('districts_covered')}}</span>
+                    <span class="stat-lbl">Districts Covered</span>
                 </div>
             </div>
         </div>
@@ -1630,8 +1570,8 @@ $secData = $secTitles[app()->getLocale()] ?? $secTitles['en'];
                 <div class="pulse-ring"></div>
             </div>
             <div class="app-text-info text-center text-md-start">
-                <span class="app-badge">{{__('coming_soon')}}</span>
-                <p class="app-main-msg">{{__('mobile_app_coming')}}</p>
+                <span class="app-badge">Coming Soon!</span>
+                <p class="app-main-msg">Our Official Mobile App is launching soon. Get ready for a seamless shopping experience!</p>
             </div>
         </div>
         <div class="app-actions">
@@ -1640,7 +1580,7 @@ $secData = $secTitles[app()->getLocale()] ?? $secTitles['en'];
                 <i class="bi bi-google-play"></i>
             </div>
             <a href="https://wa.me/250796194401?text=Notify me when the Trust Rwanda App is live!" class="notify-btn">
-                {{__('notify_me')}} <i class="bi bi-bell-fill ms-1"></i>
+                Notify Me <i class="bi bi-bell-fill ms-1"></i>
             </a>
         </div>
         <div class="shimmer-effect"></div>
