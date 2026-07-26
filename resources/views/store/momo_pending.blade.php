@@ -1,58 +1,188 @@
 @extends('layouts.app')
 
-@section('title', 'Confirm MTN MoMo Payment | Trust Rwanda')
+@section('title', 'Processing Payment | Trust Rwanda')
+
+@section('styles')
+<style>
+    .momo-container {
+        max-width: 500px;
+        margin: 80px auto;
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        padding: 40px;
+        text-align: center;
+        border: 1px solid #f1f5f9;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .momo-logo-box {
+        width: 100px;
+        height: 100px;
+        background: #ffcc00;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px auto;
+        box-shadow: 0 8px 25px rgba(255, 204, 0, 0.4);
+        position: relative;
+    }
+    
+    .momo-logo-box::after {
+        content: '';
+        position: absolute;
+        top: -10px; left: -10px; right: -10px; bottom: -10px;
+        border: 2px dashed #ffcc00;
+        border-radius: 50%;
+        animation: rotate 10s linear infinite;
+        opacity: 0.5;
+    }
+
+    @keyframes rotate {
+        100% { transform: rotate(360deg); }
+    }
+
+    .pulse-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #ffcc00;
+        border-radius: 50%;
+        z-index: -1;
+        animation: pulse 2s ease-out infinite;
+        opacity: 0;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    .momo-title {
+        font-weight: 800;
+        color: #0f172a;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .momo-desc {
+        color: #64748b;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+    
+    .instruction-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: left;
+        margin-bottom: 30px;
+    }
+    
+    .step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    .step-item:last-child { margin-bottom: 0; }
+    
+    .step-number {
+        background: #0f172a;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    
+    .step-text {
+        color: #334155;
+        font-weight: 600;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .amount-display {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 20px;
+        letter-spacing: -1px;
+    }
+</style>
+@endsection
 
 @section('content')
-<div class="container py-5 my-4">
-    <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-5 text-center">
-            <div class="mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 76px; height: 76px; border-radius: 50%; background: #ffcc00; color: #111;">
-                <i class="bi bi-phone-vibrate fs-1"></i>
-            </div>
-            <h1 class="h3 fw-bold">Approve payment on your phone</h1>
-            <p class="text-muted mb-4">An MTN MoMo prompt was sent to <strong>{{ $order->delivery_phone }}</strong>. Enter your PIN on your phone to approve {{ number_format($total) }} RWF.</p>
-
-            <div id="paymentState" class="alert alert-warning border-0 py-3" role="status">
-                <span class="spinner-border spinner-border-sm me-2"></span> Waiting for MTN confirmation...
-            </div>
-
-            <p class="small text-muted">Order reference: {{ $order->transaction_id }}</p>
-            <a href="{{ route('products.index') }}" class="btn btn-outline-secondary px-4">Continue shopping</a>
+<div class="container">
+    <div class="momo-container">
+        
+        <div class="momo-logo-box">
+            <div class="pulse-ring"></div>
+            <i class="bi bi-phone-vibrate fs-1 text-dark"></i>
         </div>
+
+        <div class="amount-display">
+            {{ number_format($totalAmount) }} RWF
+        </div>
+
+        <h2 class="momo-title">Awaiting Approval</h2>
+        <p class="momo-desc">A USSD payment prompt has been pushed to your mobile phone. Please check your phone to complete the payment.</p>
+
+        <div class="instruction-box">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-text">Unlock your mobile phone.</div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-text">Wait for the Mobile Money prompt to appear on your screen.</div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-text">Enter your Mobile Money PIN to authorize the payment of <strong>{{ number_format($totalAmount) }} RWF</strong>.</div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center gap-2 text-primary fw-bold">
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            Waiting for confirmation...
+        </div>
+        
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-const state = document.getElementById('paymentState');
-let attempts = 0;
-const checkPayment = async () => {
-    attempts++;
-    try {
-        const response = await fetch(@json(route('mtn-momo.status', ['reference' => $reference])), {
-            headers: { 'Accept': 'application/json' }
-        });
-        const result = await response.json();
-        if (result.status === 'SUCCESSFUL') {
-            state.className = 'alert alert-success border-0 py-3';
-            state.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> Payment confirmed. Your order is paid.';
-            return;
-        }
-        if (['FAILED', 'REJECTED', 'EXPIRED'].includes(result.status)) {
-            state.className = 'alert alert-danger border-0 py-3';
-            state.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i> Payment was not completed. Please return to checkout and try again.';
-            return;
-        }
-    } catch (error) {
-        // A later poll can recover from a temporary connection problem.
-    }
-    if (attempts < 60) setTimeout(checkPayment, 5000);
-    else {
-        state.className = 'alert alert-secondary border-0 py-3';
-        state.textContent = 'Confirmation is taking longer than expected. Your order remains pending.';
-    }
-};
-setTimeout(checkPayment, 2500);
+    // Polling logic to check payment status automatically
+    let checkInterval = setInterval(function() {
+        fetch('{{ route("api.momo.status", $transactionId) }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'PAID' || data.status === 'SUCCESS') {
+                    clearInterval(checkInterval);
+                    // Redirect to success page
+                    window.location.href = '{{ route("order.success") }}';
+                } else if (data.status === 'FAILED') {
+                    clearInterval(checkInterval);
+                    alert("Payment failed or was cancelled.");
+                    window.location.href = '{{ route("checkout.index") }}';
+                }
+            })
+            .catch(error => console.error('Error checking status:', error));
+    }, 3000); // Check every 3 seconds
 </script>
 @endsection

@@ -167,4 +167,109 @@ class VendorController extends Controller
 
         return view('vendor.customers', compact('customers', 'search'));
     }
+
+    public function reports(Request $request)
+    {
+        $vendorId = Auth::id();
+        $period = $request->query('period', 'daily'); // daily, weekly, monthly, yearly, custom
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        // Determine date range
+        $query = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('order_items.vendor_id', $vendorId);
+
+        $now = now();
+        $reportTitle = 'Daily Report';
+        
+        switch ($period) {
+            case 'daily':
+                $query->whereDate('orders.created_at', $now->toDateString());
+                $reportTitle = 'Daily Report (' . $now->format('M d, Y') . ')';
+                break;
+            case 'weekly':
+                $query->whereBetween('orders.created_at', [$now->copy()->startOfWeek(), $now->copy()->endOfWeek()]);
+                $reportTitle = 'Weekly Report (' . $now->copy()->startOfWeek()->format('M d') . ' - ' . $now->copy()->endOfWeek()->format('M d, Y') . ')';
+                break;
+            case 'monthly':
+                $query->whereMonth('orders.created_at', $now->month)
+                      ->whereYear('orders.created_at', $now->year);
+                $reportTitle = 'Monthly Report (' . $now->format('F Y') . ')';
+                break;
+            case 'yearly':
+                $query->whereYear('orders.created_at', $now->year);
+                $reportTitle = 'Annual Report (' . $now->year . ')';
+                break;
+            case 'custom':
+                if ($startDate && $endDate) {
+                    $query->whereBetween('orders.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                    $reportTitle = 'Custom Report (' . date('M d, Y', strtotime($startDate)) . ' - ' . date('M d, Y', strtotime($endDate)) . ')';
+                }
+                break;
+        }
+
+        // Fetch Raw Data for the table
+        $salesData = $query->select(
+            'orders.id as order_id',
+            'orders.created_at as date',
+            'products.title as product_name',
+            'order_items.quantity',
+            'order_items.price_at_purchase as unit_price',
+            DB::raw('(order_items.quantity * order_items.price_at_purchase) as total_price')
+        )->orderBy('orders.created_at', 'desc')->get();
+
+        // Calculate KPIs
+        $totalGrossSales = $salesData->sum('total_price');
+        $totalItemsSold = $salesData->sum('quantity');
+        $totalOrders = $salesData->unique('order_id')->count();
+        
+        // Net Profit Calculation (Assume 5% platform fee)
+        $platformFeeRate = 0.05;
+        $platformFeeAmount = $totalGrossSales * $platformFeeRate;
+        $netProfit = $totalGrossSales - $platformFeeAmount;
+
+        // Group data for charts (by day for weekly/monthly/custom, by month for yearly, by hour for daily)
+        $chartLabels = [];
+        $chartData = [];
+        
+        if ($period == 'daily') {
+            // Group by hour
+            $grouped = $salesData->groupBy(function($item) {
+                return date('H:00', strtotime($item->date));
+            });
+            foreach (range(0, 23) as $hour) {
+                $h = sprintf('%02d:00', $hour);
+                $chartLabels[] = $h;
+                $chartData[] = isset($grouped[$h]) ? $grouped[$h]->sum('total_price') : 0;
+            }
+        } elseif ($period == 'yearly') {
+            // Group by month
+            $grouped = $salesData->groupBy(function($item) {
+                return date('M', strtotime($item->date));
+            });
+            $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            foreach ($months as $m) {
+                $chartLabels[] = $m;
+                $chartData[] = isset($grouped[$m]) ? $grouped[$m]->sum('total_price') : 0;
+            }
+        } else {
+            // Group by day
+            $grouped = $salesData->groupBy(function($item) {
+                return date('M d', strtotime($item->date));
+            });
+            // Just output whatever days exist in the period or map explicitly
+            foreach ($grouped as $day => $items) {
+                $chartLabels[] = $day;
+                $chartData[] = $items->sum('total_price');
+            }
+        }
+
+        return view('vendor.reports', compact(
+            'period', 'startDate', 'endDate', 'reportTitle', 
+            'totalGrossSales', 'totalItemsSold', 'totalOrders', 'netProfit',
+            'salesData', 'chartLabels', 'chartData'
+        ));
+    }
 }

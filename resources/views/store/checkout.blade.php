@@ -58,11 +58,11 @@
                     <div class="d-grid">
                         <div class="alert bg-primary-subtle border-0 rounded-4 p-4 mb-0 d-flex align-items-center gap-3">
                             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
-                                <i class="bi bi-shield-lock-fill fs-4"></i>
+                                <i class="bi bi-phone-vibrate fs-4"></i>
                             </div>
                             <div>
-                                <strong class="d-block text-dark mb-1">Secure Payment Gateway</strong>
-                                <small class="text-muted">You will be securely redirected to Pesapal to choose your payment method (MTN MoMo, Airtel Money, or Bank Card).</small>
+                                <strong class="d-block text-dark mb-1">Mobile Money (USSD)</strong>
+                                <small class="text-muted">You will receive a prompt on your mobile phone to enter your PIN and complete the payment securely.</small>
                             </div>
                         </div>
                     </div>

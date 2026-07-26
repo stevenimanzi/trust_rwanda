@@ -92,6 +92,9 @@
         <a href="{{ route('vendor.orders') }}" class="hz-nav-link {{ request()->routeIs(['vendor.orders', 'vendor.orders.details']) ? 'active' : '' }}">
             <i class="bi bi-receipt-cutoff"></i> Orders
         </a>
+        <a href="{{ route('vendor.reports') }}" class="hz-nav-link {{ request()->routeIs('vendor.reports') ? 'active' : '' }}">
+            <i class="bi bi-graph-up"></i> Reports
+        </a>
         <div style="flex-grow: 1;"></div>
         
         <hr>
@@ -206,7 +209,7 @@
 </header>
 
 <!-- MAIN CONTENT -->
-<div class="container-fluid" style="padding: 32px;">
+<div class="hz-main">
     @yield('content')
 </div>
 

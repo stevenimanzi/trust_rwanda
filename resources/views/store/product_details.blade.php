@@ -231,19 +231,7 @@
                     </div>
                 @endif
 
-                <!-- Contact Vendor direct widgets -->
-                <div class="d-flex gap-3 mt-2">
-                    @if(!empty($product->vendor->phone))
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $product->vendor->phone) }}" target="_blank" class="btn btn-light border rounded-pill fw-bold px-4 py-2 text-dark flex-grow-1 d-flex align-items-center justify-content-center gap-2" style="box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
-                            <i class="bi bi-whatsapp text-success fs-5"></i> Chat
-                        </a>
-                    @endif
-                    @if(!empty($product->vendor->phone))
-                        <a href="tel:{{ $product->vendor->phone }}" class="btn btn-light border rounded-pill fw-bold px-4 py-2 text-dark flex-grow-1 d-flex align-items-center justify-content-center gap-2" style="box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
-                            <i class="bi bi-telephone text-primary fs-5"></i> Call
-                        </a>
-                    @endif
-                </div>
+                <!-- Contact Vendor direct widgets removed to enforce on-platform payments -->
 
                 <!-- Trust Badges -->
                 <div class="trust-features">

@@ -298,7 +298,7 @@ body.hz-dashboard {
 /* =========================================
    MAIN CONTENT AREA
    ========================================= */
-.container-fluid {
+.hz-main {
     margin-left: var(--hz-sidebar-width);
     margin-top: var(--hz-topnav-height);
     width: calc(100% - var(--hz-sidebar-width));
@@ -390,7 +390,7 @@ body.hz-dashboard {
         width: 100%;
         padding: 0 16px !important;
     }
-    .container-fluid {
+    .hz-main {
         margin-left: 0;
         width: 100%;
         padding: 20px 15px !important;

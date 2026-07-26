@@ -257,7 +257,7 @@ class CartController extends Controller
             'address' => ['required', 'string', 'max:1000'],
         ]);
 
-        $paymentMethod = 'pesapal';
+        $paymentMethod = 'momo';
 
         if (empty($cart)) {
             return back()->with('error', 'Cart is empty.');
@@ -370,12 +370,12 @@ class CartController extends Controller
 
             DB::commit();
 
-            \Log::info('CartController: Order saved successfully, redirecting to pesapal.checkout. Transaction ID: ' . $transactionId);
+            \Log::info('CartController: Order saved successfully, redirecting to momo.pending. Transaction ID: ' . $transactionId);
 
             session()->forget('cart');
             session()->forget('ref_user_id');
 
-            return redirect()->route('pesapal.checkout', ['order' => $transactionId]);
+            return redirect()->route('momo.pending', ['order' => $transactionId]);
 
         } catch (\Throwable $e) {
             DB::rollBack();

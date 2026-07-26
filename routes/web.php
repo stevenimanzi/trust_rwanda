@@ -80,10 +80,10 @@ Route::get('/order-success', [CartController::class, 'success'])->name('order.su
 
 
 // Payment Routes
-Route::get('/payment/pesapal/{order}', [\App\Http\Controllers\PaymentController::class, 'checkout'])
-    ->name('pesapal.checkout');
-Route::get('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])->name('payment.callback');
-Route::match(['get', 'post'], '/api/pesapal/ipn', [\App\Http\Controllers\PaymentController::class, 'ipn'])->name('api.pesapal.ipn');
+Route::get('/payment/momo/pending/{order}', [\App\Http\Controllers\MomoPaymentController::class, 'pending'])
+    ->name('momo.pending');
+Route::get('/api/momo/status/{order}', [\App\Http\Controllers\MomoPaymentController::class, 'status'])
+    ->name('api.momo.status');
 
 // Affiliate Routes
 Route::get('/affiliate', [AffiliateController::class, 'index'])->name('affiliate.index');
@@ -167,6 +167,7 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
     Route::get('/dashboard', [VendorController::class, 'dashboard'])->name('dashboard');
     Route::get('/customers', [VendorController::class, 'customers'])->name('customers');
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+    Route::get('/reports', [VendorController::class, 'reports'])->name('reports');
     
     // Products Catalog
     Route::get('/products', [VendorProductController::class, 'index'])->name('products');
