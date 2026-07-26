@@ -92,17 +92,7 @@ $navCategories = [
                 'products?category=used-electronics' => 'Elegitoroniki Zikoreshejwe',
             ]
         ],
-        'affiliate' => [
-            'title' => 'Invite & Earn',
-            'icon' => 'bi-share-fill',
-            'link' => 'affiliate',
-            'subs' => [
-                'affiliate' => 'Iyandikishe',
-                'affiliate?tab=products' => 'Ibikorwa Byo Kwinjiza',
-                'affiliate?tab=how' => 'Uko Bikora',
-                'affiliate?tab=tools' => 'Ibikoresho by\'Idirishya',
-            ]
-        ],
+
         'nearby_shops' => [
             'title' => 'Amaduka Hafi Yanjye',
             'icon' => 'bi-geo-alt-fill',
@@ -182,17 +172,7 @@ $navCategories = [
                 'products?category=used-electronics' => 'Used Electronics',
             ]
         ],
-        'affiliate' => [
-            'title' => 'Invite & Earn',
-            'icon' => 'bi-share-fill',
-            'link' => 'affiliate',
-            'subs' => [
-                'affiliate' => 'Affiliate Dashboard',
-                'affiliate?tab=products' => 'Products to Share',
-                'affiliate?tab=how' => 'How It Works',
-                'affiliate?tab=tools' => 'Marketing Tools',
-            ]
-        ],
+
         'nearby_shops' => [
             'title' => 'Near Me Shops',
             'icon' => 'bi-geo-alt-fill',
@@ -261,17 +241,7 @@ $navCategories = [
                 'products?category=used-electronics' => 'Elektroniki Zilizotumika',
             ]
         ],
-        'affiliate' => [
-            'title' => 'Invite & Earn',
-            'icon' => 'bi-share-fill',
-            'link' => 'affiliate',
-            'subs' => [
-                'affiliate' => 'Dashibodi ya Washirika',
-                'affiliate?tab=products' => 'Bidhaa za Kushiriki',
-                'affiliate?tab=how' => 'Jinsi Inavyofanya Kazi',
-                'affiliate?tab=tools' => 'Zana za Uuzaji',
-            ]
-        ],
+
         'nearby_shops' => [
             'title' => 'Maduka Karibu Nami',
             'icon' => 'bi-geo-alt-fill',
@@ -539,7 +509,7 @@ $footerCategories = [];
             padding: 0 15px;
             display: flex;
             align-items: flex-start;
-            gap: 12px;
+            gap: 6px;
             overflow-x: auto;
             scrollbar-width: none;
             scroll-behavior: smooth;
@@ -565,14 +535,14 @@ $footerCategories = [];
         .market-pill-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
+            gap: 4px;
+            padding: 5px 10px;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 50px;
             color: #475569;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             text-decoration: none !important;
             white-space: nowrap;
             transition: all 0.2s ease;

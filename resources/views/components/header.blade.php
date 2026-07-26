@@ -81,17 +81,7 @@
                     route('products.index', ['category' => 'used-electronics']) => 'Elegitoroniki Zikoreshejwe',
                 ]
             ],
-            'affiliate' => [
-                'title' => 'Invite & Earn',
-                'icon' => 'bi-share-fill',
-                'link' => route('affiliate.index'),
-                'subs' => [
-                    route('affiliate.index') => 'Iyandikishe',
-                    route('affiliate.index', ['tab' => 'products']) => 'Ibikorwa Byo Kwinjiza',
-                    route('affiliate.index', ['tab' => 'how']) => 'Uko Bikora',
-                    route('affiliate.index', ['tab' => 'tools']) => 'Ibikoresho by\'Idirishya',
-                ]
-            ],
+
             'nearby_shops' => [
                 'title' => 'Amaduka Hafi Yanjye',
                 'icon' => 'bi-geo-alt-fill',
@@ -171,17 +161,7 @@
                     route('products.index', ['category' => 'used-electronics']) => 'Used Electronics',
                 ]
             ],
-            'affiliate' => [
-                'title' => 'Invite & Earn',
-                'icon' => 'bi-share-fill',
-                'link' => route('affiliate.index'),
-                'subs' => [
-                    route('affiliate.index') => 'Affiliate Dashboard',
-                    route('affiliate.index', ['tab' => 'products']) => 'Products to Share',
-                    route('affiliate.index', ['tab' => 'how']) => 'How It Works',
-                    route('affiliate.index', ['tab' => 'tools']) => 'Marketing Tools',
-                ]
-            ],
+
             'nearby_shops' => [
                 'title' => 'Near Me Shops',
                 'icon' => 'bi-geo-alt-fill',
@@ -250,17 +230,7 @@
                     route('products.index', ['category' => 'used-electronics']) => 'Elektroniki Zilizotumika',
                 ]
             ],
-            'affiliate' => [
-                'title' => 'Invite & Earn',
-                'icon' => 'bi-share-fill',
-                'link' => route('affiliate.index'),
-                'subs' => [
-                    route('affiliate.index') => 'Dashibodi ya Washirika',
-                    route('affiliate.index', ['tab' => 'products']) => 'Bidhaa za Kushiriki',
-                    route('affiliate.index', ['tab' => 'how']) => 'Jinsi Inavyofanya Kazi',
-                    route('affiliate.index', ['tab' => 'tools']) => 'Zana za Uuzaji',
-                ]
-            ],
+
             'nearby_shops' => [
                 'title' => 'Maduka Karibu Nami',
                 'icon' => 'bi-geo-alt-fill',
