@@ -19,7 +19,7 @@
                     <i class="bi bi-geo-alt-fill text-primary"></i> Delivery Details
                 </h3>
                 
-                <form id="checkoutForm" action="{{ route('checkout.place') }}" method="POST" onsubmit="document.getElementById('submitBtn').innerHTML='<span class=\'spinner-border spinner-border-sm me-2\'></span> Redirecting securely...'; setTimeout(() => document.getElementById('submitBtn').disabled = true, 50);">
+                <form id="checkoutForm" action="{{ route('checkout.place') }}" method="POST">
                     @csrf
                     
                     <div class="mb-4">
