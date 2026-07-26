@@ -82,7 +82,6 @@
     /* Charts and Tables */
     .table-container {
         background: white;
-        border-radius: 20px;
         padding: 24px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     }
@@ -119,20 +118,23 @@
     
     /* Print Styles - High Quality PDF Export */
     @media print {
-        @page { size: A4 portrait; margin: 1.5cm; }
-        body { background: white; margin: 0; padding: 0; }
-        .sidebar, .navbar, .filters-box, .btn-print { display: none !important; }
-        .hz-main { margin: 0 !important; padding: 0 !important; width: 100% !important; }
-        .report-kpi-card, .table-container {
+        @page { size: A4 portrait; margin: 1cm; }
+        body { background: white !important; margin: 0; padding: 0; }
+        .hz-sidebar, .hz-topnav, .sidebar, .navbar, .filters-box, .btn-print, #top-header-section, #report-title-heading, #kpi-section { display: none !important; }
+        .hz-main { margin: 0 !important; padding: 0 !important; width: 100% !important; background: white !important; }
+        .table-container {
             box-shadow: none !important;
             border: 1px solid #e2e8f0 !important;
             break-inside: avoid;
+            margin-top: 20px;
+            padding: 0;
         }
         .row { display: flex !important; flex-wrap: nowrap !important; }
         .col-md-3 { width: 25% !important; }
         .kpi-value { font-size: 1.5rem !important; }
         .print-header { display: block !important; margin-bottom: 30px; text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; }
         .print-logo { font-size: 24px; font-weight: 900; }
+        .print-business-name { font-size: 18px; font-weight: bold; color: #475569; margin-bottom: 10px; }
     }
     .print-header { display: none; }
 </style>
@@ -143,6 +145,7 @@
 <!-- Print Header (Only visible when printing) -->
 <div class="print-header">
     <div class="print-logo">Trust Rwanda | Business Report</div>
+    <div class="print-business-name">{{ auth()->user()->business_name ?? auth()->user()->name }}</div>
     <h4>{{ $reportTitle }}</h4>
     <p>Generated on {{ now()->format('M d, Y H:i') }}</p>
 </div>
