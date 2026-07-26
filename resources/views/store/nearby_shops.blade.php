@@ -32,7 +32,10 @@
         .ns-list-container {
             width: 45%;
             padding: 30px 40px;
-            border-right: 1px solid #e2e8f0;
+            border-right: none;
+            box-shadow: 10px 0 20px -10px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 5;
         }
         .ns-map-container {
             width: 55%;
@@ -178,15 +181,20 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 border-0 fw-bold">SCANNING: 15 KM</span>
+            <span class="badge border border-primary text-primary bg-white rounded-pill px-3 py-1 fw-bold">SCANNING: 15 KM</span>
             <small class="text-muted fw-bold">{{ count($nearbyShops) }} shops found</small>
         </div>
 
         <div id="shopList" class="pb-4">
             @if (count($nearbyShops) == 0)
-                <div class="p-5 text-center text-muted bg-white rounded-4 border">
-                    <i class="bi bi-shop fs-1 opacity-25"></i>
-                    <p class="mt-2 fw-bold mb-0">No shops matched your criteria.</p>
+                <div class="p-5 text-center bg-white rounded-4 shadow-sm" style="border: 1px dashed #cbd5e1;">
+                    <div class="mb-3">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 80px; height: 80px;">
+                            <i class="bi bi-shop text-muted opacity-50" style="font-size: 2.5rem;"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-800 text-dark mb-2">No shops found</h5>
+                    <p class="text-muted small mb-0 px-3">We couldn't find any shops in your 15km radius matching the selected criteria. Try adjusting your search filters.</p>
                 </div>
             @else
                 @foreach ($nearbyShops as $shop)
