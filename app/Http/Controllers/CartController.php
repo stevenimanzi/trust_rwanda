@@ -272,6 +272,7 @@ class CartController extends Controller
         }
         $phone = $request->input('contact_phone', $user->phone);
 
+        \Log::info('CartController: Starting placeOrder');
         $totalAmount = 0;
         $vendorGroups = [];
 
@@ -369,15 +370,17 @@ class CartController extends Controller
 
             DB::commit();
 
+            \Log::info('CartController: Order saved successfully, redirecting to pesapal.checkout. Transaction ID: ' . $transactionId);
+
             session()->forget('cart');
             session()->forget('ref_user_id');
 
             return redirect()->route('pesapal.checkout', ['order' => $transactionId]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             \Log::error('Checkout Error: ' . $e->getMessage());
-            return back()->with('error', $e->getMessage());
+            return back()->with('error', 'Checkout Error: ' . $e->getMessage());
         }
     }
 

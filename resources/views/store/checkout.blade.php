@@ -47,13 +47,13 @@
 
                     <hr class="mb-5 border-light">
 
-                    <h3 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                        <i class="bi bi-credit-card-fill text-primary"></i> Secure Payment
-                    </h3>
-
                     @php
                         $vendorCount = count($vendorGroups);
                     @endphp
+
+                    <h3 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-credit-card-fill text-primary"></i> Secure Payment
+                    </h3>
 
                     <div class="d-grid">
                         <div class="alert bg-primary-subtle border-0 rounded-4 p-4 mb-0 d-flex align-items-center gap-3">

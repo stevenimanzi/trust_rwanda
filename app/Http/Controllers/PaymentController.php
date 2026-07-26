@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\Transaction;
-use App\Services\PesapalService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Services\PesapalService;
+use App\Models\Order;
 use Illuminate\Support\Facades\Log;
-use Throwable;
+use Illuminate\Http\RedirectResponse;
 
 class PaymentController extends Controller
 {
@@ -22,9 +18,11 @@ class PaymentController extends Controller
     public function checkout(string $orderId)
     {
         try {
+            \Log::info('PaymentController: Starting checkout for order ' . $orderId);
             $orders = Order::where('transaction_id', $orderId)->get();
             
             if ($orders->isEmpty()) {
+                \Log::warning('PaymentController: Order not found ' . $orderId);
                 return redirect()->route('cart.index')->with('error', 'Order not found.');
             }
 
@@ -35,15 +33,28 @@ class PaymentController extends Controller
                 'name' => 'Buyer'
             ];
 
+            \Log::info('PaymentController: Authenticating with Pesapal');
             $token = $this->pesapalService->authenticate();
 
+            \Log::info('PaymentController: Registering IPN');
             $ipnId = \Illuminate\Support\Facades\Cache::remember('pesapal_ipn_id', 3600*24*30, function() use ($token) {
-                return $this->pesapalService->registerIPN($token, route('api.pesapal.ipn'));
+                // Determine callback URL (Must be public, but for local testing we will let it fail gracefully)
+                try {
+                    return $this->pesapalService->registerIPN($token, route('api.pesapal.ipn'));
+                } catch (\Exception $e) {
+                    \Log::warning('IPN Registration failed, likely because of local testing environment. ' . $e->getMessage());
+                    // In production this should stop execution, but we allow bypass if local
+                    if (app()->isLocal()) {
+                        return 'dummy_ipn_id_for_local_testing';
+                    }
+                    throw $e;
+                }
             });
 
-            // For testing, limit amount
-            $testAmount = $totalAmount > 50000 ? 100.00 : round($totalAmount, 2);
+            // Limit amount if needed for testing (Optional)
+            $testAmount = round($totalAmount, 2);
 
+            // Construct billing address, replacing empty names with "Buyer" to prevent Pesapal validation errors
             $orderData = [
                 "id" => $orderId,
                 "currency" => "RWF",
@@ -53,287 +64,101 @@ class PaymentController extends Controller
                 "notification_id" => $ipnId,
                 "billing_address" => [
                     "email_address" => $user->email ?? 'buyer@trustrwanda.com',
-                    "phone_number" => $firstOrder->phone ?? '',
+                    "phone_number" => $firstOrder->delivery_phone ?? $firstOrder->phone ?? '0000000000',
                     "country_code" => "RW",
-                    "first_name" => $user->name ?? 'Buyer',
+                    "first_name" => !empty(trim($user->name)) ? $user->name : 'Buyer',
                     "middle_name" => "",
-                    "last_name" => "",
-                    "line_1" => $firstOrder->address ?? '',
+                    "last_name" => "Customer",
+                    "line_1" => !empty(trim($firstOrder->delivery_address)) ? $firstOrder->delivery_address : 'Kigali',
                     "line_2" => "",
                     "city" => "Kigali",
                     "state" => "Kigali",
-                    "postal_code" => "",
-                    "zip_code" => ""
+                    "postal_code" => "0000",
+                    "zip_code" => "0000"
                 ]
             ];
 
+            \Log::info('PaymentController: Submitting Order to Pesapal');
             $pesapalResponse = $this->pesapalService->submitOrder($token, $orderData);
 
             if (!isset($pesapalResponse['redirect_url'])) {
                 throw new \Exception('Failed to get redirect URL from Pesapal');
             }
 
+            \Log::info('PaymentController: Redirecting to ' . $pesapalResponse['redirect_url']);
             return redirect()->away($pesapalResponse['redirect_url']);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Pesapal Checkout Error: ' . $e->getMessage());
-            return redirect()->route('cart.index')->with('error', $e->getMessage());
+            return redirect()->route('cart.index')->with('error', 'Payment Gateway Error: ' . $e->getMessage());
         }
     }
 
     public function callback(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'OrderTrackingId' => ['required', 'string', 'max:255'],
-            'OrderMerchantReference' => ['nullable', 'string', 'max:255'],
+            'OrderTrackingId' => 'required|string',
+            'OrderMerchantReference' => 'required|string',
         ]);
 
         $trackingId = $validated['OrderTrackingId'];
-        $fallbackMerchantReference =
-            $validated['OrderMerchantReference'] ?? null;
+        $orderId = $validated['OrderMerchantReference'];
 
         try {
-            $payment = $this->fetchPaymentStatus(
-                $trackingId,
-                $fallbackMerchantReference
-            );
+            $token = $this->pesapalService->authenticate();
+            $statusData = $this->pesapalService->getTransactionStatus($token, $trackingId);
 
-            if ($payment['status'] === 'COMPLETED') {
-                $updated = $this->updateOrdersStatus(
-                    transactionId: $payment['merchant_reference'],
-                    status: 'paid',
-                    trackingId: $trackingId
-                );
+            $paymentStatusCode = $statusData['payment_status_description'] ?? 'Pending';
 
-                if (!$updated) {
-                    Log::warning('Pesapal callback order not found', [
-                        'tracking_id' => $trackingId,
-                        'merchant_reference' => $payment['merchant_reference'],
-                    ]);
-
-                    return redirect()
-                        ->route('products.index')
-                        ->with(
-                            'error',
-                            'Payment was received, but the related order could not be found.'
-                        );
-                }
-
-                return redirect()
-                    ->route('order.success')
-                    ->with('message', 'Payment successful.');
+            if (strtolower($paymentStatusCode) === 'completed') {
+                Order::where('transaction_id', $orderId)->update([
+                    'payment_status' => 'paid',
+                    'payment_reference' => $trackingId
+                ]);
+                return redirect()->route('order.success')->with('success', 'Your payment was successful!');
             }
 
-            if (in_array($payment['status'], ['FAILED', 'CANCELLED'], true)) {
-                $this->updateOrdersStatus(
-                    transactionId: $payment['merchant_reference'],
-                    status: 'failed',
-                    trackingId: $trackingId
-                );
-
-                return redirect()
-                    ->route('cart.index')
-                    ->with('error', 'Payment failed or was cancelled.');
+            if (strtolower($paymentStatusCode) === 'failed') {
+                return redirect()->route('cart.index')->with('error', 'Payment failed. Please try again.');
             }
 
-            return redirect()
-                ->route('order.success')
-                ->with(
-                    'message',
-                    'Payment is being processed. The order will be updated after confirmation.'
-                );
-        } catch (Throwable $exception) {
-            Log::error('Pesapal callback processing failed', [
-                'tracking_id' => $trackingId,
-                'merchant_reference' => $fallbackMerchantReference,
-                'exception' => $exception->getMessage(),
-            ]);
+            return redirect()->route('order.success')->with('success', 'Your payment is pending confirmation.');
 
-            return redirect()
-                ->route('products.index')
-                ->with(
-                    'message',
-                    'The order was received, but payment confirmation is still pending.'
-                );
+        } catch (\Exception $e) {
+            Log::error('Pesapal Callback Error: ' . $e->getMessage());
+            return redirect()->route('order.success')->with('success', 'Your order was placed, but we are verifying the payment.');
         }
     }
 
-    public function ipn(Request $request): JsonResponse
+    public function ipn(Request $request)
     {
-        $validator = validator($request->all(), [
-            'OrderTrackingId' => ['required', 'string', 'max:255'],
-            'OrderMerchantReference' => ['nullable', 'string', 'max:255'],
-            'OrderNotificationType' => ['nullable', 'string', 'max:100'],
-        ]);
+        Log::info('Pesapal IPN Received', $request->all());
 
-        if ($validator->fails()) {
-            Log::warning('Invalid Pesapal IPN payload', [
-                'errors' => $validator->errors()->toArray(),
-            ]);
-
-            return response()->json([
-                'status' => 400,
-                'message' => 'Invalid notification payload.',
-            ], 400);
+        if (!$request->has('OrderTrackingId') || !$request->has('OrderMerchantReference')) {
+            return response()->json(['status' => 'error', 'message' => 'Invalid IPN data'], 400);
         }
 
-        $validated = $validator->validated();
-
-        $trackingId = $validated['OrderTrackingId'];
-        $fallbackMerchantReference =
-            $validated['OrderMerchantReference'] ?? null;
-
-        Log::info('Pesapal IPN received', [
-            'tracking_id' => $trackingId,
-            'merchant_reference' => $fallbackMerchantReference,
-            'notification_type' =>
-                $validated['OrderNotificationType'] ?? null,
-        ]);
+        $trackingId = $request->input('OrderTrackingId');
+        $orderId = $request->input('OrderMerchantReference');
 
         try {
-            $payment = $this->fetchPaymentStatus(
-                $trackingId,
-                $fallbackMerchantReference
-            );
+            $token = $this->pesapalService->authenticate();
+            $statusData = $this->pesapalService->getTransactionStatus($token, $trackingId);
 
-            if ($payment['status'] === 'COMPLETED') {
-                $this->updateOrdersStatus(
-                    transactionId: $payment['merchant_reference'],
-                    status: 'paid',
-                    trackingId: $trackingId
-                );
-            } elseif (
-                in_array(
-                    $payment['status'],
-                    ['FAILED', 'CANCELLED'],
-                    true
-                )
-            ) {
-                $this->updateOrdersStatus(
-                    transactionId: $payment['merchant_reference'],
-                    status: 'failed',
-                    trackingId: $trackingId
-                );
-            }
+            $paymentStatusCode = $statusData['payment_status_description'] ?? 'Pending';
 
-            return response()->json([
-                'orderNotificationType' =>
-                    $validated['OrderNotificationType'] ?? null,
-                'orderTrackingId' => $trackingId,
-                'orderMerchantReference' =>
-                    $payment['merchant_reference'],
-                'status' => 200,
-            ], 200);
-        } catch (Throwable $exception) {
-            Log::error('Pesapal IPN processing failed', [
-                'tracking_id' => $trackingId,
-                'merchant_reference' => $fallbackMerchantReference,
-                'exception' => $exception->getMessage(),
-            ]);
-
-            return response()->json([
-                'status' => 500,
-                'message' => 'Payment notification processing failed.',
-            ], 500);
-        }
-    }
-
-    /**
-     * @return array{
-     *     status: string,
-     *     merchant_reference: string
-     * }
-     */
-    private function fetchPaymentStatus(
-        string $trackingId,
-        ?string $fallbackMerchantReference
-    ): array {
-        $token = $this->pesapalService->authenticate();
-
-        $response = $this->pesapalService->getTransactionStatus(
-            $token,
-            $trackingId
-        );
-
-        $status = strtoupper(
-            (string) ($response['payment_status_description'] ?? 'PENDING')
-        );
-
-        $merchantReference =
-            $response['merchant_reference']
-            ?? $fallbackMerchantReference;
-
-        if (!$merchantReference) {
-            throw new \RuntimeException(
-                'Pesapal merchant reference is missing.'
-            );
-        }
-
-        return [
-            'status' => $status,
-            'merchant_reference' => (string) $merchantReference,
-        ];
-    }
-
-    private function updateOrdersStatus(
-        string $transactionId,
-        string $status,
-        string $trackingId
-    ): bool {
-        return DB::transaction(function () use (
-            $transactionId,
-            $status,
-            $trackingId
-        ): bool {
-            $orders = Order::query()
-                ->where('transaction_id', $transactionId)
-                ->lockForUpdate()
-                ->get();
-
-            if ($orders->isEmpty()) {
-                return false;
-            }
-
-            $currentPaymentStatus = $orders->first()->payment_status;
-
-            // A confirmed payment must never be downgraded.
-            if ($currentPaymentStatus === 'paid' && $status !== 'paid') {
-                Log::warning('Attempted to downgrade paid order', [
-                    'transaction_id' => $transactionId,
-                    'tracking_id' => $trackingId,
-                    'requested_status' => $status,
+            if (strtolower($paymentStatusCode) === 'completed') {
+                Order::where('transaction_id', $orderId)->update([
+                    'payment_status' => 'paid',
+                    'payment_reference' => $trackingId
                 ]);
-
-                return true;
             }
 
-            Order::query()
-                ->where('transaction_id', $transactionId)
-                ->update([
-                    'payment_status' => $status,
-                    'payment_method' => 'pesapal',
-                ]);
+            return response()->json(['status' => 'success']);
 
-            if ($status === 'paid') {
-                $firstOrder = $orders->first();
-                $totalAmount = $orders->sum('total_amount');
-
-                Transaction::firstOrCreate(
-                    [
-                        'reference_id' => $trackingId,
-                    ],
-                    [
-                        'user_id' => $firstOrder->user_id,
-                        'amount' => $totalAmount,
-                        'type' => 'payment',
-                        'description' =>
-                            'Pesapal payment for order '
-                            . $transactionId,
-                    ]
-                );
-            }
-
-            return true;
-        });
+        } catch (\Exception $e) {
+            Log::error('Pesapal IPN Processing Error: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Internal server error'], 500);
+        }
     }
 }
