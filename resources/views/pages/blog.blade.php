@@ -10,8 +10,8 @@
                 @for($i = 1; $i <= 6; $i++)
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm h-100">
-                        <div class="card-img-top bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
-                            <i class="bi bi-image text-muted display-4"></i>
+                        <div class="card-img-top bg-light position-relative overflow-hidden" style="height: 200px;">
+                            <img src="https://picsum.photos/400/200?random={{ $i + 10 }}" class="w-100 h-100" style="object-fit: cover;" alt="Blog Image">
                         </div>
                         <div class="card-body p-4">
                             <span class="badge bg-primary mb-2">Market Insights</span>

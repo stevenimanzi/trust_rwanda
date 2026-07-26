@@ -15,31 +15,13 @@
 
             <h3 class="fw-bold mb-4">Open Positions</h3>
             
-            <div class="list-group list-group-flush shadow-sm rounded mb-5">
-                <a href="#" class="list-group-item list-group-item-action p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="fw-bold mb-1">Senior Full Stack Developer</h5>
-                        <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1"></i> Kigali (Hybrid) &bull; Engineering</p>
-                    </div>
-                    <i class="bi bi-chevron-right text-muted"></i>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="fw-bold mb-1">Regional Marketing Manager</h5>
-                        <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1"></i> Kigali &bull; Marketing</p>
-                    </div>
-                    <i class="bi bi-chevron-right text-muted"></i>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action p-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="fw-bold mb-1">Customer Success Specialist</h5>
-                        <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1"></i> Remote &bull; Support</p>
-                    </div>
-                    <i class="bi bi-chevron-right text-muted"></i>
-                </a>
+            <div class="card border-0 shadow-sm rounded mb-5 text-center p-5 bg-light">
+                <i class="bi bi-briefcase text-muted mb-3" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold text-dark">No Open Positions</h4>
+                <p class="text-muted mb-0">We currently do not have any open positions available. Please check back later as we are constantly growing!</p>
             </div>
             
-            <p class="text-center text-muted">Don't see a role that fits? Send your resume to <a href="mailto:careers@trustrwanda.com">careers@trustrwanda.com</a>.</p>
+            <p class="text-center text-muted">Want to proactively join the team? Send your resume to <a href="mailto:careers@trustrwanda.com">careers@trustrwanda.com</a>.</p>
         </div>
     </div>
 </div>
