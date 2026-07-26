@@ -87,8 +87,8 @@
         box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     }
     .custom-table {
-        border-collapse: separate;
-        border-spacing: 0 8px;
+        border-collapse: collapse;
+        width: 100%;
     }
     .custom-table th {
         background: transparent;
@@ -97,36 +97,24 @@
         text-transform: uppercase;
         font-size: 0.75rem;
         letter-spacing: 1px;
-        border: none;
-        padding: 10px 20px;
+        border-bottom: 2px solid #e2e8f0;
+        padding: 12px 20px;
     }
     .custom-table tbody tr {
-        background: #ffffff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        border-radius: 12px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        /* Flat enterprise style */
     }
-    .custom-table tbody tr:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    .custom-table tbody tr:nth-child(even) td {
+        background-color: #f8fafc !important; /* Lighter zebra stripe for standard tables */
+    }
+    .custom-table tbody tr:nth-child(odd) td {
+        background-color: #ffffff !important;
     }
     .custom-table td {
-        padding: 18px 20px;
+        padding: 16px 20px;
         vertical-align: middle;
         color: #334155;
         font-weight: 500;
-        border-top: 1px solid #f8fafc;
-        border-bottom: 1px solid #f8fafc;
-    }
-    .custom-table td:first-child {
-        border-left: 1px solid #f8fafc;
-        border-top-left-radius: 12px;
-        border-bottom-left-radius: 12px;
-    }
-    .custom-table td:last-child {
-        border-right: 1px solid #f8fafc;
-        border-top-right-radius: 12px;
-        border-bottom-right-radius: 12px;
+        border-bottom: 1px solid #e2e8f0;
     }
     
     /* Print Styles - High Quality PDF Export */
@@ -159,7 +147,7 @@
     <p>Generated on {{ now()->format('M d, Y H:i') }}</p>
 </div>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div id="top-header-section" class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="fw-bold mb-1">Financial Reports</h2>
         <p class="text-muted mb-0">Analyze your business performance and earnings.</p>
@@ -188,10 +176,10 @@
     </div>
 </div>
 
-<h4 class="fw-bold mb-4">{{ $reportTitle }}</h4>
+<h4 id="report-title-heading" class="fw-bold mb-4">{{ $reportTitle }}</h4>
 
 <!-- KPI Cards -->
-<div class="row g-4 mb-4">
+<div class="row g-4 mb-4" id="kpi-section">
     <div class="col-md-3">
         <div class="report-kpi-card">
             <div class="kpi-icon bg-indigo-subtle"><i class="bi bi-wallet2"></i></div>
