@@ -255,7 +255,10 @@ class CartController extends Controller
         $request->validate([
             'contact_phone' => ['required', 'string', 'max:30'],
             'address' => ['required', 'string', 'max:1000'],
+            'momo_phone' => ['required', 'string', 'max:20'],
         ]);
+
+        $momoPhone = $request->input('momo_phone');
 
         $paymentMethod = 'momo';
 
@@ -307,7 +310,7 @@ class CartController extends Controller
         DB::beginTransaction();
 
         try {
-            $transactionId = 'KURA_' . strtoupper(bin2hex(random_bytes(4)));
+            $transactionId = 'TR_' . strtoupper(bin2hex(random_bytes(4)));
             $firstOrderId = null;
             $whatsappLinks = [];
 
@@ -321,7 +324,8 @@ class CartController extends Controller
                     'delivery_status' => 'pending',
                     'delivery_address' => $address,
                     'delivery_phone' => $phone,
-                    'transaction_id' => $transactionId
+                    'transaction_id' => $transactionId,
+                    'payment_reference' => $momoPhone
                 ]);
 
                 if (!$firstOrderId) {

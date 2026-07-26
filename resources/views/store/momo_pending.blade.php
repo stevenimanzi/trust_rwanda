@@ -137,7 +137,7 @@
         </div>
 
         <h2 class="momo-title">Awaiting Approval</h2>
-        <p class="momo-desc">A USSD payment prompt has been pushed to your mobile phone. Please check your phone to complete the payment.</p>
+        <p class="momo-desc">A USSD payment prompt has been pushed to your mobile phone (<strong>{{ $momoPhone }}</strong>). Please check your phone to complete the payment.</p>
 
         <div class="instruction-box">
             <div class="step-item">

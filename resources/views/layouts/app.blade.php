@@ -1373,7 +1373,7 @@ $footerCategories = [];
             }
 
         } catch (error) {
-            console.warn("KURA Real-time sync paused.");
+            console.warn("Trust Rwanda Real-time sync paused.");
         }
     }
 

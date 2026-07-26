@@ -50,7 +50,7 @@
                     <div class="col-md-6">
                         <label class="form-label">Access Password</label>
                         <div class="input-group">
-                            <input type="password" name="password" class="form-control border-end-0" id="inputPass" value="Kura@2026" required>
+                            <input type="password" name="password" class="form-control border-end-0" id="inputPass" value="TrustRwanda@2026" required>
                             <button class="btn btn-dark border border-start-0 border-dark border-opacity-10 fw-bold px-3" style="font-size: 0.7rem;" type="button" onclick="genPass()">GENERATE</button>
                         </div>
                     </div>

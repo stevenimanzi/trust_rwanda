@@ -22,8 +22,10 @@ class MomoPaymentController extends Controller
         // Get total amount
         $totalAmount = $orders->sum('total_amount');
         
+        $momoPhone = $orders->first()->payment_reference ?? 'your phone';
+        
         // Pass the transaction ID and total amount to the view
-        return view('store.momo_pending', compact('transactionId', 'totalAmount'));
+        return view('store.momo_pending', compact('transactionId', 'totalAmount', 'momoPhone'));
     }
 
     /**

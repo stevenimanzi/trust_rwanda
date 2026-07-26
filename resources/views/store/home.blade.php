@@ -1089,129 +1089,7 @@
     </div>
 </div>
 
-<div class="container mb-5">
-    <?php
-    $homeCatTitles = [
-        'rw' => [
-            'farmers'     => 'Abahinzi & Umusaruro',
-            'real_estate' => 'Imitungo Itimukanwa',
-            'fashion'     => 'Imyambaro & Imideli',
-            'electronics' => 'Elegitoroniki',
-            'second_hand' => 'Ibyakoreshejwe',
-            'affiliate'   => 'Invite & Earn',
-            'all'         => 'Ibihari Byose'
-        ],
-        'en' => [
-            'farmers'     => 'Farmers & Harvest',
-            'real_estate' => 'Real Estate',
-            'fashion'     => 'Fashion & Clothing',
-            'electronics' => 'Electronics Shop',
-            'second_hand' => 'Second Hand',
-            'affiliate'   => 'Invite & Earn',
-            'all'         => 'All Products'
-        ],
-        'sw' => [
-            'farmers'     => 'Wakulima na Mavuno',
-            'real_estate' => 'Mali Isiyohamishika',
-            'fashion'     => 'Mitindo na Mavazi',
-            'electronics' => 'Elektroniki',
-            'second_hand' => 'Bidhaa Zilizotumika',
-            'affiliate'   => 'Washirika (Earn)',
-            'all'         => 'Bidhaa Zote'
-        ]
-    ];
-    $currentLang = app()->getLocale();
-    $homeCatData = $homeCatTitles[$currentLang] ?? $homeCatTitles['en'];
-    ?>
 
-    <!-- Shop by Categories Premium Cards -->
-    <div class="sec-header border-0 mb-4 d-flex justify-content-between align-items-end">
-        <div>
-            <span class="text-primary fw-bold small text-uppercase tracking-wider mb-1 d-block">Explore</span>
-            <h3 class="fw-800 mb-0" style="font-size: 1.8rem; letter-spacing: -0.5px;">{{__('best_shop_categories')}}</h3>
-        </div>
-    </div>
-    
-    <div class="row g-4 mb-2">
-        <!-- Farmers Market -->
-        <div class="col-md-4 col-sm-6">
-            <a href="{{url('/')}}/farmers-market" class="premium-cat-card" style="background: linear-gradient(145deg, #ecfdf5 0%, #d1fae5 100%);">
-                <div class="cat-content">
-                    <div class="cat-icon-premium text-success"><i class="bi bi-flower1"></i></div>
-                    <h5 class="fw-bold text-dark mb-1">{{$homeCatData['farmers']}}</h5>
-                    <span class="text-success small fw-semibold">Fresh Local Produce &rarr;</span>
-                </div>
-                <div class="cat-bg-icon"><i class="bi bi-basket text-success"></i></div>
-            </a>
-        </div>
-        <!-- Real Estate -->
-        <div class="col-md-4 col-sm-6">
-            <a href="{{url('/')}}/real_estate" class="premium-cat-card" style="background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%);">
-                <div class="cat-content">
-                    <div class="cat-icon-premium text-primary"><i class="bi bi-buildings"></i></div>
-                    <h5 class="fw-bold text-dark mb-1">{{$homeCatData['real_estate']}}</h5>
-                    <span class="text-primary small fw-semibold">Verified Properties &rarr;</span>
-                </div>
-                <div class="cat-bg-icon"><i class="bi bi-house-door text-primary"></i></div>
-            </a>
-        </div>
-        <!-- Electronics -->
-        <div class="col-md-4 col-sm-6">
-            <a href="{{url('/')}}/products?category=electronics" class="premium-cat-card" style="background: linear-gradient(145deg, #eef2ff 0%, #e0e7ff 100%);">
-                <div class="cat-content">
-                    <div class="cat-icon-premium" style="color: #4f46e5;"><i class="bi bi-laptop"></i></div>
-                    <h5 class="fw-bold text-dark mb-1">{{$homeCatData['electronics']}}</h5>
-                    <span class="small fw-semibold" style="color: #4f46e5;">Top Tech Deals &rarr;</span>
-                </div>
-                <div class="cat-bg-icon"><i class="bi bi-cpu" style="color: #4f46e5;"></i></div>
-            </a>
-        </div>
-        <!-- Fashion -->
-        <div class="col-md-4 col-sm-6">
-            <a href="{{url('/')}}/products?category=fashion" class="premium-cat-card" style="background: linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%);">
-                <div class="cat-content">
-                    <div class="cat-icon-premium" style="color: #e11d48;"><i class="bi bi-handbag"></i></div>
-                    <h5 class="fw-bold text-dark mb-1">{{$homeCatData['fashion']}}</h5>
-                    <span class="small fw-semibold" style="color: #e11d48;">Latest Trends &rarr;</span>
-                </div>
-                <div class="cat-bg-icon"><i class="bi bi-tags" style="color: #e11d48;"></i></div>
-            </a>
-        </div>
-        <!-- Second Hand -->
-        <div class="col-md-4 col-sm-6">
-            <a href="{{url('/')}}/products?category=second-hand" class="premium-cat-card" style="background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);">
-                <div class="cat-content">
-                    <div class="cat-icon-premium text-secondary"><i class="bi bi-recycle"></i></div>
-                    <h5 class="fw-bold text-dark mb-1">{{$homeCatData['second_hand']}}</h5>
-                    <span class="text-secondary small fw-semibold">Quality Used Goods &rarr;</span>
-                </div>
-                <div class="cat-bg-icon"><i class="bi bi-bag text-secondary"></i></div>
-            </a>
-        </div>
-        <!-- Affiliate -->
-        <div class="col-md-4 col-sm-6">
-            <a href="{{url('/')}}/affiliate" class="premium-cat-card" style="background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%);">
-                <div class="cat-content">
-                    <div class="cat-icon-premium text-warning"><i class="bi bi-share-fill"></i></div>
-                    <h5 class="fw-bold text-dark mb-1">{{$homeCatData['affiliate']}}</h5>
-                    <span class="text-warning small fw-semibold">Earn Commissions &rarr;</span>
-                </div>
-                <div class="cat-bg-icon"><i class="bi bi-cash-coin text-warning"></i></div>
-            </a>
-        </div>
-        <!-- All Products -->
-        <div class="col-md-4 col-sm-6">
-            <a href="{{url('/')}}/products" class="premium-cat-card" style="background: linear-gradient(145deg, #fdf4ff 0%, #fae8ff 100%);">
-                <div class="cat-content">
-                    <div class="cat-icon-premium" style="color: #c026d3;"><i class="bi bi-grid-fill"></i></div>
-                    <h5 class="fw-bold text-dark mb-1">{{$homeCatData['all']}}</h5>
-                    <span class="small fw-semibold" style="color: #c026d3;">Browse Catalog &rarr;</span>
-                </div>
-                <div class="cat-bg-icon"><i class="bi bi-collection" style="color: #c026d3;"></i></div>
-            </a>
-        </div>
-    </div>
-</div>
 
 <div class="container mb-5">
     <!-- ════════ FLASH DEALS SECTION ════════ -->
@@ -1476,7 +1354,7 @@ $secTitles = [
         'safety_item_4' => 'Msaada wa Simu 24/7'
     ]
 ];
-$secData = $secTitles[$currentLang] ?? $secTitles['en'];
+$secData = $secTitles[app()->getLocale()] ?? $secTitles['en'];
 ?>
 
 <!-- ════════ REAL ESTATE SHOWCASE SECTION (NEW!) ════════ -->

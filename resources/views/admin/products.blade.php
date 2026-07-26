@@ -93,7 +93,7 @@
                     <tr>
                         <td>
                             <div class="d-flex align-items-center gap-3">
-                                <img src="{{ kura_product_image_url($p->image_url, 'https://placehold.co/100?text=KURA') }}" style="width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 1px solid var(--hz-border);" onerror="this.src='https://placehold.co/100?text=KURA'">
+                                <img src="{{ kura_product_image_url($p->image_url, 'https://placehold.co/100?text=TRUST') }}" style="width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 1px solid var(--hz-border);" onerror="this.src='https://placehold.co/100?text=TRUST'">
                                 <div>
                                     <div class="fw-bold text-dark">{{ $p->title }}</div>
                                     <div class="small text-muted">{{ strtoupper($p->category) }}</div>
@@ -150,7 +150,7 @@
         @foreach ($products as $p)
         <div class="mobile-product-card">
             <div class="d-flex gap-3 mb-3">
-                <img src="{{ kura_product_image_url($p->image_url, 'https://placehold.co/100?text=KURA') }}" class="product-thumb" onerror="this.src='https://placehold.co/100?text=KURA'">
+                <img src="{{ kura_product_image_url($p->image_url, 'https://placehold.co/100?text=TRUST') }}" class="product-thumb" onerror="this.src='https://placehold.co/100?text=TRUST'">
                 <div class="flex-grow-1 overflow-hidden">
                     <div class="fw-900 small text-truncate">{{ $p->title }}</div>
                     <div class="text-primary fw-bold" style="font-size:0.7rem;">{{ $p->shop_name }}</div>

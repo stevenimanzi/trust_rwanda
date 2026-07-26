@@ -32,7 +32,7 @@
                     <tr>
                         <td>
                             <div class="d-flex align-items-center gap-3">
-                                <img src="{{ kura_product_image_url($r->image_url, 'https://placehold.co/100?text=KURA') }}" class="product-preview" onerror="this.src='https://placehold.co/100?text=KURA'">
+                                <img src="{{ kura_product_image_url($r->image_url, 'https://placehold.co/100?text=TRUST') }}" class="product-preview" onerror="this.src='https://placehold.co/100?text=TRUST'">
                                 <div>
                                     <div class="fw-800 small">{{ $r->title }}</div>
                                     @if($r->is_flash_deal)
@@ -80,7 +80,7 @@
         @foreach ($requests as $r)
         <div class="mobile-request-card">
             <div class="d-flex align-items-center gap-3 mb-3">
-                <img src="{{ kura_product_image_url($r->image_url, 'https://placehold.co/100?text=KURA') }}" class="product-preview" onerror="this.src='https://placehold.co/100?text=KURA'">
+                <img src="{{ kura_product_image_url($r->image_url, 'https://placehold.co/100?text=TRUST') }}" class="product-preview" onerror="this.src='https://placehold.co/100?text=TRUST'">
                 <div class="flex-grow-1 overflow-hidden">
                     <div class="fw-900 small text-truncate">{{ $r->title }}</div>
                     <div class="text-primary fw-bold" style="font-size:0.7rem;">{{ $r->shop_name }}</div>
