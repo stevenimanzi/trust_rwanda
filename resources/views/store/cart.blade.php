@@ -285,7 +285,7 @@
                     <div class="mt-4 pt-3 border-top text-center">
                         <p class="small text-muted fw-medium mb-2"><i class="bi bi-credit-card-2-front me-2"></i>Secure Payment Options</p>
                         <div class="d-flex justify-content-center gap-2 opacity-75">
-                            <span class="badge bg-light text-dark border p-2"><i class="bi bi-shield-check"></i> Pesapal</span>
+                            <span class="badge bg-light text-dark border p-2"><i class="bi bi-shield-check"></i> Secure payment</span>
                             <span class="badge bg-light text-dark border p-2"><i class="bi bi-whatsapp"></i> Direct Order</span>
                         </div>
                     </div>

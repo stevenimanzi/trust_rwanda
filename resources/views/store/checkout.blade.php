@@ -55,7 +55,7 @@
                         <i class="bi bi-credit-card-fill text-primary"></i> Secure Payment
                     </h3>
 
-                    <p class="text-muted mb-0">You will continue to Pesapal's secure checkout to complete your payment.</p>
+                    <p class="text-muted mb-0">Continue to the secure payment page to choose card, bank, or an available phone payment method.</p>
 
                 @if(session('error'))
                     <div class="alert alert-danger rounded-4 mt-3">
@@ -65,7 +65,7 @@
 
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary w-100 py-3 rounded-4 fw-bold shadow-sm d-flex justify-content-center align-items-center position-relative overflow-hidden" id="submitBtn">
-                        Pay with Pesapal <i class="bi bi-shield-check ms-2"></i>
+                        Pay <i class="bi bi-shield-check ms-2"></i>
                     </button>
                 </div>
                 </form>
@@ -205,6 +205,25 @@ if (shareLocationBtn && addressField) {
         );
     });
 }
+
+document.getElementById('checkoutForm')?.addEventListener('submit', () => {
+    const button = document.getElementById('submitBtn');
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Opening secure payment...';
+
+    window.setTimeout(() => {
+        if (document.visibilityState !== 'visible') return;
+
+        button.disabled = false;
+        button.innerHTML = 'Pay <i class="bi bi-shield-check ms-2"></i>';
+        const message = 'The payment service took too long to respond. Please try again.';
+        if (window.Swal) {
+            Swal.fire({ icon: 'error', title: 'Payment timeout', text: message });
+        } else {
+            window.alert(message);
+        }
+    }, 45000);
+});
 </script>
 @endsection
 @endsection

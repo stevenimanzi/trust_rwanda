@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Http\RedirectResponse;
 
 class PaymentController extends Controller
@@ -32,6 +33,15 @@ class PaymentController extends Controller
 
             $totalAmount = $orders->sum('total_amount');
             $firstOrder = $orders->first();
+
+            if ($firstOrder->payment_status === 'paid') {
+                return redirect()->route('order.success');
+            }
+
+            if ($firstOrder->payment_reference && Str::isUuid($firstOrder->payment_reference)) {
+                return $this->redirectToHostedCheckout($firstOrder->payment_reference);
+            }
+
             $user = auth()->user() ?? (object)[
                 'email' => 'buyer@trustrwanda.com',
                 'name' => 'Buyer'
@@ -92,8 +102,12 @@ class PaymentController extends Controller
                 ]);
             }
 
-            \Log::info('PaymentController: Redirecting to ' . $pesapalResponse['redirect_url']);
-            return redirect()->away($pesapalResponse['redirect_url']);
+            \Log::info('PaymentController: Redirecting to Pesapal hosted checkout', [
+                'order_id' => $orderId,
+                'tracking_id' => $pesapalResponse['order_tracking_id'] ?? null,
+            ]);
+
+            return $this->redirectToHostedCheckoutUrl($pesapalResponse['redirect_url']);
 
         } catch (\Throwable $e) {
             Log::error('Pesapal Checkout Error: ' . $e->getMessage());
@@ -189,5 +203,26 @@ class PaymentController extends Controller
                 ]);
             }
         });
+    }
+
+    private function redirectToHostedCheckout(string $trackingId): RedirectResponse
+    {
+        $url = 'https://pay.pesapal.com/iframe/PesapalIframe3/Index?'.http_build_query([
+            'OrderTrackingId' => $trackingId,
+        ]);
+
+        return $this->redirectToHostedCheckoutUrl($url);
+    }
+
+    private function redirectToHostedCheckoutUrl(string $url): RedirectResponse
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        if ($host !== 'pay.pesapal.com') {
+            throw new \RuntimeException('The payment provider returned an invalid checkout URL.');
+        }
+
+        return redirect()->away($url, 303, [
+            'Cache-Control' => 'no-store, no-cache, must-revalidate',
+        ]);
     }
 }

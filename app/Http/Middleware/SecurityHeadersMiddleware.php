@@ -31,7 +31,7 @@ class SecurityHeadersMiddleware
             "base-uri 'self'",
             "frame-ancestors 'none'",
             "object-src 'none'",
-            "form-action 'self' https://wa.me https://api.whatsapp.com",
+            "form-action 'self' https://pay.pesapal.com https://wa.me https://api.whatsapp.com",
             "img-src 'self' data: blob: https:",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
             "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
