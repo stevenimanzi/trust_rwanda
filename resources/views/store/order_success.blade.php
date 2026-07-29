@@ -24,7 +24,7 @@
                 </div>
 
                 <p class="text-muted px-md-5 mb-4">
-                    Your order has been recorded successfully. To finalize delivery, please click the "Notify Vendor" button below for each shop. This will generate a direct WhatsApp message with your delivery details and order invoice.
+                    Your Pesapal payment has been received and your order is confirmed. The vendor will use your delivery details to arrange fulfillment.
                 </p>
 
                 <div class="address-badge mb-5">
@@ -32,30 +32,9 @@
                     <span>Delivery Address: <b>{{ $latestOrder['address'] }}</b></span>
                 </div>
 
-                <div class="row g-3 text-start px-md-4">
-                    @foreach ($latestOrder['links'] as $link)
-                        <div class="col-12">
-                            <div class="vendor-card p-4 d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="bg-primary-subtle text-primary rounded-4 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;">
-                                        <i class="bi bi-shop-window fs-3"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-800 text-dark fs-5">{{ $link['shop_name'] }}</div>
-                                        <div class="small fw-bold text-success mt-1">
-                                            Amount: {{ number_format($link['subtotal']) }} RWF
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="d-flex gap-2">
-                                    <a href="{{ $link['url'] }}" target="_blank" class="btn wa-btn rounded-pill px-4 py-2 fw-800 shadow-sm">
-                                        <i class="bi bi-whatsapp"></i> Notify Vendor
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                <div class="d-flex justify-content-center gap-4 mb-2">
+                    <span class="fw-bold text-dark">Total paid</span>
+                    <span class="fw-bold text-success">{{ number_format($latestOrder['total']) }} RWF</span>
                 </div>
 
                 <div class="mt-5 border-top pt-5">

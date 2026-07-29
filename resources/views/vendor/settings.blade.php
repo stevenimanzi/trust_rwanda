@@ -158,7 +158,7 @@
                                 <input type="text" name="full_name" class="form-control form-control-pro w-100" value="{{ old('full_name', $vendor->full_name) }}" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label-pro">Mobile Money Phone</label>
+                                <label class="form-label-pro">Payment Contact Phone</label>
                                 <input type="text" name="phone" class="form-control form-control-pro w-100" value="{{ old('phone', $vendor->phone) }}" required>
                             </div>
                         </div>

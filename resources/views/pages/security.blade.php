@@ -17,7 +17,7 @@
                     <p class="text-muted small">All data transmitted between your browser and our servers is encrypted using 256-bit SSL/TLS protocols, ensuring that your personal and financial information remains private.</p>
                     
                     <h5 class="fw-bold mt-4"><i class="bi bi-credit-card text-primary me-2"></i> Secure Payments</h5>
-                    <p class="text-muted small">We partner with verified payment gateways (MTN MoMo, Airtel Money, BK) that are PCI-DSS compliant. We do not store your raw credit card data on our servers.</p>
+                    <p class="text-muted small">Payments are processed securely through Pesapal. We do not store raw card details on our servers.</p>
                     
                     <h5 class="fw-bold mt-4"><i class="bi bi-person-check text-warning me-2"></i> Vendor Verification</h5>
                     <p class="text-muted small">Every property owner and vendor on Trust Rwanda undergoes a rigorous manual verification process before they are allowed to list products, drastically reducing fraud.</p>

@@ -55,26 +55,7 @@
                         <i class="bi bi-credit-card-fill text-primary"></i> Secure Payment
                     </h3>
 
-                    <div class="d-grid">
-                        <div class="alert bg-primary-subtle border-0 rounded-4 p-4 mb-0 d-flex flex-column gap-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
-                                    <i class="bi bi-phone-vibrate fs-4"></i>
-                                </div>
-                                <div>
-                                    <strong class="d-block text-dark mb-1">Mobile Money (USSD)</strong>
-                                    <small class="text-muted">You will receive a prompt on your mobile phone to enter your PIN.</small>
-                                </div>
-                            </div>
-                            <div class="mt-2">
-                                <label class="form-label fw-bold text-dark small">Mobile Money Number</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0 text-muted" style="border-radius: 12px 0 0 12px;"><i class="bi bi-phone"></i></span>
-                                    <input type="text" name="momo_phone" class="form-control border-start-0 ps-0" placeholder="e.g. 078XXXXXXX" style="border-radius: 0 12px 12px 0; border: 1px solid #e2e8f0; height: 45px;" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="text-muted mb-0">You will continue to Pesapal's secure checkout to complete your payment.</p>
 
                 @if(session('error'))
                     <div class="alert alert-danger rounded-4 mt-3">
@@ -84,7 +65,7 @@
 
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary w-100 py-3 rounded-4 fw-bold shadow-sm d-flex justify-content-center align-items-center position-relative overflow-hidden" id="submitBtn">
-                        Pay Now <i class="bi bi-shield-check ms-2"></i>
+                        Pay with Pesapal <i class="bi bi-shield-check ms-2"></i>
                     </button>
                 </div>
                 </form>

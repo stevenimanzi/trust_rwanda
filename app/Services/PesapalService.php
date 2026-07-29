@@ -21,7 +21,11 @@ class PesapalService
 
     public function authenticate()
     {
-        $response = Http::withoutVerifying()->post("{$this->baseUrl}/api/Auth/RequestToken", [
+        if (!$this->consumerKey || !$this->consumerSecret) {
+            throw new \RuntimeException('Pesapal credentials are not configured.');
+        }
+
+        $response = Http::timeout(20)->post("{$this->baseUrl}/api/Auth/RequestToken", [
             'consumer_key' => $this->consumerKey,
             'consumer_secret' => $this->consumerSecret,
         ]);
@@ -36,7 +40,7 @@ class PesapalService
 
     public function registerIPN($token, $ipnUrl)
     {
-        $response = Http::withoutVerifying()->withToken($token)->post("{$this->baseUrl}/api/URLSetup/RegisterIPN", [
+        $response = Http::timeout(20)->withToken($token)->post("{$this->baseUrl}/api/URLSetup/RegisterIPN", [
             'url' => $ipnUrl,
             'ipn_notification_type' => 'POST',
         ]);
@@ -51,7 +55,7 @@ class PesapalService
 
     public function submitOrder($token, $orderData)
     {
-        $response = Http::withoutVerifying()->withToken($token)->post("{$this->baseUrl}/api/Transactions/SubmitOrderRequest", $orderData);
+        $response = Http::timeout(20)->withToken($token)->post("{$this->baseUrl}/api/Transactions/SubmitOrderRequest", $orderData);
 
         if ($response->successful() && $response->json('status') == '200') {
             return $response->json();
@@ -69,7 +73,9 @@ class PesapalService
 
     public function getTransactionStatus($token, $orderTrackingId)
     {
-        $response = Http::withoutVerifying()->withToken($token)->get("{$this->baseUrl}/api/Transactions/GetTransactionStatus?orderTrackingId={$orderTrackingId}");
+        $response = Http::timeout(20)->withToken($token)->get("{$this->baseUrl}/api/Transactions/GetTransactionStatus", [
+            'orderTrackingId' => $orderTrackingId,
+        ]);
 
         if ($response->successful() && $response->json('status') == '200') {
             return $response->json();

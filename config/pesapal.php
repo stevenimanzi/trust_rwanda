@@ -9,4 +9,6 @@ return [
     
     'live_api' => 'https://pay.pesapal.com/v3',
     'sandbox_api' => 'https://cybqa.pesapal.com/pesapalv3',
+    'callback_url' => env('PESAPAL_CALLBACK_URL'),
+    'ipn_url' => env('PESAPAL_IPN_URL'),
 ];

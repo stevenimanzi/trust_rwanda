@@ -740,7 +740,7 @@ CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
-  `payment_method` varchar(50) NOT NULL DEFAULT 'momo',
+  `payment_method` varchar(50) NOT NULL DEFAULT 'pesapal',
   `payment_status` enum('pending','paid','failed') DEFAULT 'pending',
   `delivery_status` enum('pending','confirmed','shipped','delivered','cancelled') DEFAULT 'pending',
   `delivery_address` text DEFAULT NULL,

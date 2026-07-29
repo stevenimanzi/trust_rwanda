@@ -1287,7 +1287,7 @@ $secTitles = [
         'workflow_earn_desc' => 'Promote products and listings. Earn up to 10% commission on closed sales.',
         
         'safety_title' => '100% Trust & Buyer Protection Guarantee',
-        'safety_desc' => 'Your financial safety is our absolute priority. Never send mobile money payments before physical verification.',
+        'safety_desc' => 'Your financial safety is our priority. Complete payments only through the secure Trust Rwanda checkout.',
         'safety_item_1' => 'Verify Before Payment',
         'safety_item_2' => 'Secured Escrow Deals',
         'safety_item_3' => 'Verified Vendor Shops',

@@ -44,7 +44,7 @@
                             </h2>
                             <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    We support a variety of payment methods including MTN Mobile Money, Airtel Money, BK Bank transfers, and standard credit/debit cards via secure payment gateways.
+                                    Payments are completed through Pesapal's secure checkout using the methods available for your account and region.
                                 </div>
                             </div>
                         </div>

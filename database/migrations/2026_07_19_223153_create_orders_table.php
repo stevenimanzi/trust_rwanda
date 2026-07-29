@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id');
             $table->decimal('total_amount');
-            $table->string('payment_method', 50)->default('momo');
+            $table->string('payment_method', 50)->default('pesapal');
             $table->string('payment_status')->nullable()->default('pending');
             $table->string('delivery_status')->nullable()->default('pending');
             $table->text('delivery_address')->nullable();

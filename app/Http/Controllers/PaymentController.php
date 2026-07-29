@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\PesapalService;
 use App\Models\Order;
+use App\Models\Transaction;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;
 
@@ -19,7 +21,9 @@ class PaymentController extends Controller
     {
         try {
             \Log::info('PaymentController: Starting checkout for order ' . $orderId);
-            $orders = Order::where('transaction_id', $orderId)->get();
+            $orders = Order::where('transaction_id', $orderId)
+                ->when(auth()->check(), fn ($query) => $query->where('user_id', auth()->id()))
+                ->get();
             
             if ($orders->isEmpty()) {
                 \Log::warning('PaymentController: Order not found ' . $orderId);
@@ -37,9 +41,8 @@ class PaymentController extends Controller
             $token = $this->pesapalService->authenticate();
 
             \Log::info('PaymentController: Registering IPN');
-            $ipnId = \Illuminate\Support\Facades\Cache::remember('pesapal_ipn_id_' . (app()->isLocal() ? 'local' : 'prod'), 3600*24*30, function() use ($token) {
-                // Determine IPN URL (Must be a public domain. If local, fake it so Pesapal API accepts it)
-                $ipnUrl = app()->isLocal() ? 'https://trustrwanda.com/api/pesapal/ipn' : route('api.pesapal.ipn');
+            $ipnId = \Illuminate\Support\Facades\Cache::remember('pesapal_ipn_id_' . config('pesapal.env'), 3600*24*30, function() use ($token) {
+                $ipnUrl = config('pesapal.ipn_url') ?: route('api.pesapal.ipn');
                 
                 try {
                     return $this->pesapalService->registerIPN($token, $ipnUrl);
@@ -49,17 +52,14 @@ class PaymentController extends Controller
                 }
             });
 
-            // Limit amount if needed for testing (Optional)
-            $testAmount = round($totalAmount, 2);
+            $paymentAmount = round($totalAmount, 2);
 
-            // Construct billing address, replacing empty names with "Buyer" to prevent Pesapal validation errors
-            // Ensure callback URL is a valid domain to prevent Pesapal from blocking the iframe load
-            $callbackUrl = app()->isLocal() ? 'https://trustrwanda.com/payment/callback' : route('payment.callback');
+            $callbackUrl = config('pesapal.callback_url') ?: route('payment.callback');
 
             $orderData = [
                 "id" => $orderId,
                 "currency" => "RWF",
-                "amount" => $testAmount,
+                "amount" => $paymentAmount,
                 "description" => "Trust Rwanda Order " . $orderId,
                 "callback_url" => $callbackUrl,
                 "notification_id" => $ipnId,
@@ -86,12 +86,18 @@ class PaymentController extends Controller
                 throw new \Exception('Failed to get redirect URL from Pesapal');
             }
 
+            if (!empty($pesapalResponse['order_tracking_id'])) {
+                Order::where('transaction_id', $orderId)->update([
+                    'payment_reference' => $pesapalResponse['order_tracking_id'],
+                ]);
+            }
+
             \Log::info('PaymentController: Redirecting to ' . $pesapalResponse['redirect_url']);
             return redirect()->away($pesapalResponse['redirect_url']);
 
         } catch (\Throwable $e) {
             Log::error('Pesapal Checkout Error: ' . $e->getMessage());
-            return redirect()->route('cart.index')->with('error', 'Payment Gateway Error: ' . $e->getMessage());
+            return redirect()->route('cart.index')->with('error', 'Pesapal is temporarily unavailable. Please try again.');
         }
     }
 
@@ -112,14 +118,12 @@ class PaymentController extends Controller
             $paymentStatusCode = $statusData['payment_status_description'] ?? 'Pending';
 
             if (strtolower($paymentStatusCode) === 'completed') {
-                Order::where('transaction_id', $orderId)->update([
-                    'payment_status' => 'paid',
-                    'payment_reference' => $trackingId
-                ]);
+                $this->markPaid($orderId, $trackingId);
                 return redirect()->route('order.success')->with('success', 'Your payment was successful!');
             }
 
             if (strtolower($paymentStatusCode) === 'failed') {
+                Order::where('transaction_id', $orderId)->update(['payment_status' => 'failed']);
                 return redirect()->route('cart.index')->with('error', 'Payment failed. Please try again.');
             }
 
@@ -149,10 +153,9 @@ class PaymentController extends Controller
             $paymentStatusCode = $statusData['payment_status_description'] ?? 'Pending';
 
             if (strtolower($paymentStatusCode) === 'completed') {
-                Order::where('transaction_id', $orderId)->update([
-                    'payment_status' => 'paid',
-                    'payment_reference' => $trackingId
-                ]);
+                $this->markPaid($orderId, $trackingId);
+            } elseif (strtolower($paymentStatusCode) === 'failed') {
+                Order::where('transaction_id', $orderId)->update(['payment_status' => 'failed']);
             }
 
             return response()->json(['status' => 'success']);
@@ -161,5 +164,30 @@ class PaymentController extends Controller
             Log::error('Pesapal IPN Processing Error: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Internal server error'], 500);
         }
+    }
+
+    private function markPaid(string $orderId, string $trackingId): void
+    {
+        DB::transaction(function () use ($orderId, $trackingId) {
+            $orders = Order::where('transaction_id', $orderId)->lockForUpdate()->get();
+            if ($orders->isEmpty()) {
+                return;
+            }
+
+            Order::where('transaction_id', $orderId)->update([
+                'payment_status' => 'paid',
+                'payment_reference' => $trackingId,
+            ]);
+
+            if (!Transaction::where('reference_id', $trackingId)->exists()) {
+                Transaction::create([
+                    'user_id' => $orders->first()->user_id,
+                    'amount' => $orders->sum('total_amount'),
+                    'type' => 'payment',
+                    'description' => "Pesapal payment for order {$orderId}",
+                    'reference_id' => $trackingId,
+                ]);
+            }
+        });
     }
 }

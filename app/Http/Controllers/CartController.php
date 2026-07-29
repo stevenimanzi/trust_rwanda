@@ -255,12 +255,9 @@ class CartController extends Controller
         $request->validate([
             'contact_phone' => ['required', 'string', 'max:30'],
             'address' => ['required', 'string', 'max:1000'],
-            'momo_phone' => ['required', 'string', 'max:20'],
         ]);
 
-        $momoPhone = $request->input('momo_phone');
-
-        $paymentMethod = 'momo';
+        $paymentMethod = 'pesapal';
 
         if (empty($cart)) {
             return back()->with('error', 'Cart is empty.');
@@ -324,8 +321,7 @@ class CartController extends Controller
                     'delivery_status' => 'pending',
                     'delivery_address' => $address,
                     'delivery_phone' => $phone,
-                    'transaction_id' => $transactionId,
-                    'payment_reference' => $momoPhone
+                    'transaction_id' => $transactionId
                 ]);
 
                 if (!$firstOrderId) {
@@ -374,12 +370,18 @@ class CartController extends Controller
 
             DB::commit();
 
-            \Log::info('CartController: Order saved successfully, redirecting to momo.pending. Transaction ID: ' . $transactionId);
+            \Log::info('CartController: Order saved successfully, redirecting to Pesapal. Transaction ID: ' . $transactionId);
 
             session()->forget('cart');
             session()->forget('ref_user_id');
+            session(['latest_order_secure' => [
+                'id' => $firstOrderId,
+                'transaction_id' => $transactionId,
+                'address' => $address,
+                'total' => $totalAmount,
+            ]]);
 
-            return redirect()->route('momo.pending', ['order' => $transactionId]);
+            return redirect()->route('payment.pesapal.checkout', ['order' => $transactionId]);
 
         } catch (\Throwable $e) {
             DB::rollBack();
