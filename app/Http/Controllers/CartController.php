@@ -372,8 +372,6 @@ class CartController extends Controller
 
             \Log::info('CartController: Order saved successfully, redirecting to Pesapal. Transaction ID: ' . $transactionId);
 
-            session()->forget('cart');
-            session()->forget('ref_user_id');
             session(['latest_order_secure' => [
                 'id' => $firstOrderId,
                 'transaction_id' => $transactionId,

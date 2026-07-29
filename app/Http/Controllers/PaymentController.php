@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Services\PesapalService;
 use App\Models\Order;
 use App\Models\Transaction;
+use App\Models\AffiliateCommission;
+use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -36,6 +39,13 @@ class PaymentController extends Controller
 
             if ($firstOrder->payment_status === 'paid') {
                 return redirect()->route('order.success');
+            }
+
+            if ($firstOrder->payment_status === 'failed') {
+                return response()->view('store.payment_error', [
+                    'orderId' => $orderId,
+                    'message' => 'This payment attempt was not accepted. Your items were released so you can update the cart and try again.',
+                ], 422);
             }
 
             if ($firstOrder->payment_reference && Str::isUuid($firstOrder->payment_reference)) {
@@ -107,11 +117,22 @@ class PaymentController extends Controller
                 'tracking_id' => $pesapalResponse['order_tracking_id'] ?? null,
             ]);
 
+            session()->forget(['cart', 'ref_user_id']);
+
             return $this->redirectToHostedCheckoutUrl($pesapalResponse['redirect_url']);
 
         } catch (\Throwable $e) {
             Log::error('Pesapal Checkout Error: ' . $e->getMessage());
-            return redirect()->route('cart.index')->with('error', 'Pesapal is temporarily unavailable. Please try again.');
+            $this->releaseFailedOrder($orderId);
+
+            $message = str_contains(strtolower($e->getMessage()), 'amount exceeds limit')
+                ? 'This order is above the payment limit enabled on the merchant account. Please try a smaller order or contact support.'
+                : 'The secure payment service could not open. Your cart has been preserved; please try again.';
+
+            return response()->view('store.payment_error', [
+                'orderId' => $orderId,
+                'message' => $message,
+            ], 502);
         }
     }
 
@@ -137,7 +158,7 @@ class PaymentController extends Controller
             }
 
             if (strtolower($paymentStatusCode) === 'failed') {
-                Order::where('transaction_id', $orderId)->update(['payment_status' => 'failed']);
+                $this->releaseFailedOrder($orderId);
                 return redirect()->route('cart.index')->with('error', 'Payment failed. Please try again.');
             }
 
@@ -169,7 +190,7 @@ class PaymentController extends Controller
             if (strtolower($paymentStatusCode) === 'completed') {
                 $this->markPaid($orderId, $trackingId);
             } elseif (strtolower($paymentStatusCode) === 'failed') {
-                Order::where('transaction_id', $orderId)->update(['payment_status' => 'failed']);
+                $this->releaseFailedOrder($orderId);
             }
 
             return response()->json(['status' => 'success']);
@@ -202,6 +223,28 @@ class PaymentController extends Controller
                     'reference_id' => $trackingId,
                 ]);
             }
+        });
+    }
+
+    private function releaseFailedOrder(string $orderId): void
+    {
+        DB::transaction(function () use ($orderId) {
+            $orders = Order::where('transaction_id', $orderId)
+                ->where('payment_status', 'pending')
+                ->lockForUpdate()
+                ->get();
+
+            if ($orders->isEmpty()) {
+                return;
+            }
+
+            $orderIds = $orders->pluck('id');
+            OrderItem::whereIn('order_id', $orderIds)->get()->each(function (OrderItem $item) {
+                Product::whereKey($item->product_id)->increment('stock_quantity', $item->quantity);
+            });
+
+            AffiliateCommission::whereIn('order_id', $orderIds)->update(['status' => 'failed']);
+            Order::whereIn('id', $orderIds)->update(['payment_status' => 'failed']);
         });
     }
 
